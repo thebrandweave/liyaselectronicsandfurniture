@@ -1599,8 +1599,7 @@ export default function Shop({ path }: { path: string[] }) {
                   <Check />
                   <h2>Request saved</h2>
                   <p>
-                    Your sample order reference is <b>{success}</b>. No payment
-                    has been collected and no real stock is reserved.
+                    Your Order has been Placed.
                   </p>
                   <a className="btn" href="/account">
                     View my orders
