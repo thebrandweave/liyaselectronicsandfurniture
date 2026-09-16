@@ -109,19 +109,17 @@ export async function createUser(
 ) {
   const { users } = await collections();
 
-  const document = {
+  const document: AuthUserDocument = {
+    _id: new ObjectId(),
     name: name.trim(),
     email: normalizeEmail(email),
     passwordHash: hashPassword(password),
     createdAt: new Date(),
   };
 
-  const result = await users.insertOne(document as Omit<AuthUserDocument, "_id">);
+  await users.insertOne(document);
 
-  return {
-    ...document,
-    _id: result.insertedId,
-  };
+  return document;
 }
 
 export async function createSession(userId: ObjectId) {
