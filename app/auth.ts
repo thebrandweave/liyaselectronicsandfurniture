@@ -1,11 +1,28 @@
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
+import {
+  findSession,
+  findUserById,
+} from "@/lib/auth-store";
 
-// This export retains the original ZIP's local testing workflow.
-// Production never trusts a visitor-supplied identity header or a simulated user.
+export const SESSION_COOKIE = "liyas_session";
+
 export async function getStoreUser() {
-  if (process.env.NODE_ENV !== "development" || process.env.LOCAL_DEV_AUTH !== "true") return null;
-  const host = (await headers()).get("host") || "";
-  if (!/^(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/.test(host)) return null;
-  const email = process.env.LOCAL_DEV_EMAIL || "mufizmalar@gmail.com";
-  return { userId: "local-development-user", displayName: "Local developer", email };
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+
+  if (!token) return null;
+
+  const session = await findSession(token);
+
+  if (!session) return null;
+
+  const user = await findUserById(session.userId);
+
+  if (!user) return null;
+
+  return {
+    userId: user._id.toString(),
+    email: user.email,
+    displayName: user.name,
+  };
 }

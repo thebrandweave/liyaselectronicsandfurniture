@@ -427,7 +427,7 @@ main > h1,
   height: 400px;
   background: #ffffff;
   border-radius: 0;
-  padding: 25px;
+  padding: 0px;
   overflow: hidden;
 }
 .product {
@@ -665,10 +665,10 @@ main > h1,
   color: #7d746c;
 }
 footer {
-  background: #f5f3ef;
+  background: #ffffff;
   color: #282828;
-  border-top: 1px solid #e4ded6;
-  padding: 55px 4% 25px;
+  /* border-top: 1px solid #e4ded6; */
+  padding: 19px 4% 25px;
 }
 .footer-grid .brand-logo {
   background: transparent;
@@ -1000,7 +1000,7 @@ footer {
     font-size: 11px;
   }
   .product-image {
-    height: 210px;
+    height: 87%;
     padding: 22px 12px;
   }
   .product-info {
@@ -1159,7 +1159,7 @@ footer {
     font-size: 35px;
   }
   .catalog .three .product-image {
-    height: 210px;
+    height: 87%;
   }
 }
 @media (max-width: 370px) {

@@ -284,6 +284,7 @@ header {
   font-weight: 600;
 }
 .search {
+  display:block;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -844,7 +845,7 @@ footer {
 main > h1 {
   font-family: "Cormorant", Georgia, serif;
   font-weight: 400;
-  font-size: 44px;
+  font-size: 48px;
   margin: 12px 0 20px;
 }
 .collection-heading p {
@@ -852,7 +853,7 @@ main > h1 {
 }
 .catalog {
   display: grid;
-  grid-template-columns: 210px minmax(0, 1fr);
+  grid-template-columns: 245px minmax(0, 1fr);
   gap: 35px;
   padding-bottom: 60px;
 }
@@ -1421,9 +1422,11 @@ main:has(.admin-stats) {
   .catalog {
     grid-template-columns: 1fr;
     gap: 25px;
+
   }
   .catalog aside {
-    display: grid;
+    display:none;
+    /* display: grid; */
     grid-template-columns: 1fr 1fr;
     gap: 0 15px;
     border: 0;
@@ -1585,7 +1588,7 @@ main {
   padding-right: 6%;
 }
 main > section {
-  padding-top: 88px;
+  padding-top: 48px;
 }
 .topbar {
   position: fixed;
@@ -1626,11 +1629,11 @@ header {
 }
 .logo-crop img {
   position: absolute;
-  width: 145.04%;
+  width: 99.04%;
   max-width: none;
   height: auto;
-  left: -23.3%;
-  top: -99.3%;
+  /* left: -23.3%; */
+  /* top: -99.3%; */
 }
 .search {
   background: transparent;
@@ -1978,7 +1981,7 @@ nav > span {
 }
 .price {
   gap: 12px;
-  margin-top: 14px;
+  margin-top: 0px;
 }
 .price strong {
   font-size: 21px;
@@ -2158,7 +2161,7 @@ footer {
 }
 .collection-heading h1,
 main > h1 {
-  font-size: 52px;
+  font-size: 48px;
   color: #242424;
 }
 .collection-heading {
@@ -2222,9 +2225,7 @@ main > h1 {
 .empty svg {
   color: #9b198d;
 }
-.catalog .three .product-image {
-  height: 245px;
-}
+
 .notice {
   background: #eee7e9;
   color: #6e455e;
@@ -2309,6 +2310,7 @@ main > h1 {
     gap: 18px;
   }
   .search {
+    display:none;
     padding: 6px 0;
     max-width: none !important;
     flex-basis: 100%;
@@ -2598,7 +2600,9 @@ main > h1 {
     font-size: 37px;
   }
   .collection-heading {
-    padding-top: 28px;
+    padding-top:6px;
+
+    
   }
   .collection-heading p {
     font-size: 15px;

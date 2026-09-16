@@ -30,10 +30,21 @@ export async function GET(req: Request) {
         orders: await list("order"),
         enquiries: await list("contact"),
         products: await products(),
-        categories: await list("category"),
-        brands: await list("brand"),
-        offers: await list("offer"),
-        reviews: await list("review"),
+      categories: (await list("category")).filter(
+  (x) => !x.deleted,
+),
+
+brands: (await list("brand")).filter(
+  (x) => !x.deleted,
+),
+
+offers: (await list("offer")).filter(
+  (x) => !x.deleted,
+),
+
+reviews: (await list("review")).filter(
+  (x) => !x.deleted,
+),
       });
     }
     return out({
@@ -166,12 +177,50 @@ export async function POST(req: Request) {
             price: z.number().min(0),
             original: z.number().min(0),
             stock: z.number().int().min(0),
-            image: z.string().refine((v) => v.startsWith("/images/") || v.startsWith("https://")),
+       image: z.string().refine(
+  (v) =>
+    v.startsWith("/images/") ||
+    v.startsWith("/api/shop/image/") ||
+    v.startsWith("https://"),
+),
           }).parse(b.data);
         await save(id, kind, user.userId, b.data);
       }
       return out({ ok: true });
     }
+    if (b.action === "admin-delete") {
+  if (!admin) {
+    return out(
+      { error: "Administrator access required" },
+      403,
+    );
+  }
+
+  const kind = z
+    .enum([
+      "product",
+      "category",
+      "brand",
+      "offer",
+      "review",
+    ])
+    .parse(b.kind);
+
+  const id = z.string().min(1).max(100).parse(b.id);
+
+  await save(
+    id,
+    kind,
+    user.userId,
+    {
+      deleted: true,
+    },
+  );
+
+  return out({
+    ok: true,
+  });
+}
     return out({ error: "Unknown action" }, 400);
   } catch (e) {
     console.error("Store request failed:", e instanceof Error ? e.name : "Unknown error");

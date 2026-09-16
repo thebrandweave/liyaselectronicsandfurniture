@@ -263,7 +263,7 @@ export default function ShowroomHome({
   </div>
 );
   return (
-    <div className="showroom-home w-full overflow-clip">
+    <div className="showroom-home w-full overflow-clip max-lg:[&_svg]:shrink-0">
       <Carousel
         className="showroom-hero"
         opts={{ loop: true, duration: 0 }}
@@ -273,7 +273,7 @@ export default function ShowroomHome({
         <CarouselContent className="hero-track">
           {slides.map((s, i) => (
             <CarouselItem
-              className="hero-slide"
+              className="hero-slide max-md:h-auto! max-md:min-h-[520px]!"
               key={s.id}
               aria-label={`${i + 1} of ${slides.length}: ${s.eyebrow}`}
               aria-hidden={slide !== i}
@@ -287,7 +287,7 @@ export default function ShowroomHome({
                 fetchPriority={i === 0 ? "high" : "auto"}
               />
               <div className="showroom-hero-shade" />
-              <div className="showroom-hero-copy">
+              <div className="showroom-hero-copy max-md:min-h-[520px] max-md:px-6! max-md:py-24! max-sm:[&>h1]:text-[42px]! max-sm:[&>h2]:text-[42px]! max-sm:[&>span]:leading-relaxed max-sm:[&>a]:max-w-full max-sm:[&>a]:gap-4!">
                 <span>{s.eyebrow}</span>
                 {i === 0 ? <h1>{s.title}</h1> : <h2>{s.title}</h2>}
                 <p>{s.copy}</p>
@@ -324,13 +324,13 @@ export default function ShowroomHome({
       </Carousel>
   <main className="showroom-main mx-auto! w-full! px-[1.3%]! max-[1024px]:px-[5%]!">
         <section className="popular-section">
-          <div className="showroom-heading mb-7 flex items-end justify-between gap-[25px] max-[761px]:mb-[23px] max-[761px]:items-start max-[761px]:gap-[15px] max-[371px]:flex-wrap">
+          <div className="showroom-heading max-sm:flex-col! max-sm:items-start! max-sm:[&>a]:max-w-none! max-sm:[&>a]:min-h-11! mb-7 flex items-end justify-between gap-[25px] max-[761px]:mb-[23px] max-[761px]:items-start max-[761px]:gap-[15px] max-[371px]:flex-wrap">
             <h2>Popular categories</h2>
             <a href="/products">
               Shop all products <ArrowUpRight size={18} />
             </a>
           </div>
-          <div className="popular-grid grid grid-cols-6 gap-[18px] max-[1201px]:gap-[15px] max-[1024px]:grid-cols-3 max-[1024px]:gap-x-5 max-[1024px]:gap-y-[25px] max-[761px]:gap-x-3 max-[761px]:gap-y-[22px] max-[371px]:gap-x-[9px] max-[371px]:gap-y-[19px]">
+          <div className="popular-grid max-sm:grid-cols-2! grid grid-cols-6 gap-[18px] max-[1201px]:gap-[15px] max-[1024px]:grid-cols-3 max-[1024px]:gap-x-5 max-[1024px]:gap-y-[25px] max-[761px]:gap-x-3 max-[761px]:gap-y-[22px] max-[371px]:gap-x-[9px] max-[371px]:gap-y-[19px]">
             {[
               { label: "Sofas", image: "sofa", category: "Sofas" },
                { label: "Appliances", image: "fridge", category: "Refrigerators" },
@@ -343,7 +343,7 @@ export default function ShowroomHome({
             ].map((c) => (
               <a
                 href={"/products?category=" + encodeURIComponent(c.category)}
-                className="popular-item"
+                className="popular-item max-sm:[&>span]:min-h-11 max-sm:[&>span]:text-[13px]!"
                 key={c.label}
               >
                <div className="">
@@ -363,7 +363,7 @@ export default function ShowroomHome({
           </div>
         </section>
     <section className="rooms-section">
-  <div className="showroom-heading mb-7 flex items-end justify-between gap-[25px] max-[761px]:mb-[23px] max-[761px]:items-start max-[761px]:gap-[15px] max-[371px]:flex-wrap">
+  <div className="showroom-heading max-sm:flex-col! max-sm:items-start! max-sm:[&>a]:max-w-none! max-sm:[&>a]:min-h-11! mb-7 flex items-end justify-between gap-[25px] max-[761px]:mb-[23px] max-[761px]:items-start max-[761px]:gap-[15px] max-[371px]:flex-wrap">
     <div>
       <span className="tiny-label">A HOME, ONE ROOM AT A TIME</span>
       <h2>Find your kind of living.</h2>
@@ -374,65 +374,88 @@ export default function ShowroomHome({
     </a>
   </div>
 
-   <div className="relative  grid grid-cols-1 max-[761px]:grid-cols-1">
- <article
-  className={`room-collection room-${currentRoom}`}
->
-      <a
-        className="room-collection-photo"
-        href={
-          "/products?category=" +
-          encodeURIComponent(rooms[currentRoom].category)
-        }
-      >
-        <img
-          src={rooms[currentRoom].image}
-          alt={`${rooms[currentRoom].name} interior inspiration`}
-          loading="lazy"
-        />
+<div className="relative grid grid-cols-[8.5fr_1fr] gap-2 max-[761px]:grid-cols-1 max-[761px]:[&>article:first-child>a]:h-[360px]! max-[400px]:[&>article:first-child>a]:h-[300px]!">
 
-        <div className="room-photo-shade" />
+  {/* MAIN IMAGE - 8.5fr */}
+  <article className={`room-collection room-${currentRoom}`}>
+    <a
+      className="room-collection-photo"
+      href={
+        "/products?category=" +
+        encodeURIComponent(rooms[currentRoom].category)
+      }
+    >
+      <img
+        src={rooms[currentRoom].image}
+        alt={`${rooms[currentRoom].name} interior inspiration`}
+        loading="lazy"
+      />
 
-        <div className="room-collection-name">
-          <span>
-            0{currentRoom + 1} / THE LIYA’S COLLECTION
-          </span>
+      <div className="room-photo-shade" />
 
-          <h3>{rooms[currentRoom].name}</h3>
-        </div>
-
-        <span className="room-open absolute bottom-[22px] right-[22px] grid size-11 place-items-center rounded-full border border-white/70">
-          <ArrowUpRight size={24} />
+      <div className="room-collection-name max-sm:left-5! max-sm:right-5! max-sm:[&>h3]:text-[34px]!">
+        <span>
+          0{currentRoom + 1} / THE LIYA’S COLLECTION
         </span>
-      </a>
 
-  
-    </article>
+        <h3>{rooms[currentRoom].name}</h3>
+      </div>
 
-    {/* LEFT BUTTON */}
-    <button
-      type="button"
-      onClick={prevRoom}
-      aria-label="Previous room"
-      className="absolute left-4 top-[40%] z-20 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-white shadow-lg hover:scale-105 max-[761px]:left-2 max-[761px]:size-10"
+      <span className="room-open absolute bottom-[22px] right-[22px] grid size-11 place-items-center rounded-full border border-white/70">
+        <ArrowUpRight size={24} />
+      </span>
+    </a>
+  </article>
+
+
+  {/* NEXT IMAGE - 1fr */}
+  <article className="room-collection max-[761px]:hidden">
+    <a
+      className="room-collection-photo"
+      href={
+        "/products?category=" +
+        encodeURIComponent(
+          rooms[(currentRoom + 1) % rooms.length].category
+        )
+      }
     >
-      <ChevronLeft size={26} />
-    </button>
+      <img
+        src={rooms[(currentRoom + 1) % rooms.length].image}
+        alt={`${rooms[(currentRoom + 1) % rooms.length].name} interior inspiration`}
+        loading="lazy"
+      />
 
-    {/* RIGHT BUTTON */}
-    <button
-      type="button"
-      onClick={nextRoom}
-      aria-label="Next room"
-      className="absolute right-4 top-[40%] z-20 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-white shadow-lg hover:scale-105 max-[761px]:right-2 max-[761px]:size-10"
-    >
-      <ChevronRight size={26} />
-    </button>
-  </div>
+      <div className="room-photo-shade" />
+    </a>
+  </article>
+
+
+  {/* LEFT BUTTON */}
+  <button
+    type="button"
+    onClick={prevRoom}
+    aria-label="Previous room"
+    className="absolute left-4 top-[40%] z-20 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-white shadow-lg hover:scale-105 max-[761px]:left-2 max-[761px]:size-11 max-[761px]:top-1/2"
+  >
+    <ChevronLeft size={26} />
+  </button>
+
+
+  {/* RIGHT BUTTON */}
+  <button
+    type="button"
+    onClick={nextRoom}
+    aria-label="Next room"
+    className="absolute right-4 top-[40%] z-20 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-white shadow-lg hover:scale-105 max-[761px]:right-2 max-[761px]:size-11 max-[761px]:top-1/2"
+  >
+    <ChevronRight size={26} />
+  </button>
+
+</div>
 
 </section>
  <section
-  className="electronics-feature"
+  className="electronics-feature max-lg:flex! max-lg:flex-col max-lg:gap-0! max-lg:p-0! max-lg:min-h-0!"
   style={{
     position: "relative",
     minHeight: "360px",
@@ -443,7 +466,7 @@ export default function ShowroomHome({
 >
   {/* LEFT CONTENT */}
   <div
-    className="electronics-copy"
+    className="electronics-copy max-lg:w-full! max-lg:min-h-0! max-lg:p-8! max-sm:p-6! max-sm:[&>h2]:text-[36px]! max-lg:[&>a]:self-start max-sm:[&>a]:max-w-full max-sm:[&>a]:gap-4!"
     style={{
       position: "relative",
       zIndex: 10,
@@ -478,6 +501,7 @@ export default function ShowroomHome({
 
   {/* RIGHT FULL IMAGE */}
   <div
+    className="max-lg:relative! max-lg:inset-auto! max-lg:w-full! max-lg:h-[320px] max-sm:h-[240px] max-lg:shrink-0"
     style={{
       position: "absolute",
       top: 0,
@@ -513,6 +537,7 @@ export default function ShowroomHome({
 
       {/* LEFT WHITE FADE */}
       <div
+        className="max-lg:hidden"
         style={{
           position: "absolute",
           inset: 0,
@@ -534,7 +559,7 @@ export default function ShowroomHome({
   </div>
 </section>
 <section className="favourites-section">
-  <div className="showroom-heading mb-7 flex items-end justify-between gap-[5px] max-[761px]:mb-[23px] max-[761px]:items-start max-[761px]:gap-[15px] max-[371px]:flex-wrap">
+  <div className="showroom-heading max-sm:flex-col! max-sm:items-start! max-sm:[&>a]:max-w-none! max-sm:[&>a]:min-h-11! mb-7 flex items-end justify-between gap-[5px] max-[761px]:mb-[23px] max-[761px]:items-start max-[761px]:gap-[15px] max-[371px]:flex-wrap">
     <h2>Best Sellers</h2>
 
     <a href="/products">
@@ -558,14 +583,14 @@ export default function ShowroomHome({
       .map((p) => (
         <CarouselItem
           key={p.id}
-          className="basis-1/4 pl-4 max-[1024px]:basis-1/3 max-[761px]:basis-1/2"
+          className="basis-1/4 pl-4 max-[1024px]:basis-1/3 max-[761px]:basis-1/2 max-[380px]:basis-[85%]!"
         >
           <div className="group relative select-none">
             
             {/* IMAGE */}
             <a
               href={"/products/" + p.id}
-              className="relative block aspect-[4/5] overflow-hidden bg-[#f5f5f3]"
+              className="relative block aspect-[4/5] overflow-hidden "
               draggable={false}
             >
               {/* DEFAULT IMAGE */}
@@ -633,7 +658,7 @@ export default function ShowroomHome({
               draggable={false}
             >
               <div className="flex items-start justify-between gap-3">
-                <h3 className="text-[16px] font-normal">
+                <h3 className="text-[16px] font-normal min-w-0 break-words max-sm:text-[14px]">
                   {p.name}
                 </h3>
 
@@ -652,7 +677,7 @@ export default function ShowroomHome({
 </section>
      
         {/* <section className="showroom-brands">
-          <div className="showroom-heading mb-7 flex items-end justify-between gap-[25px] max-[761px]:mb-[23px] max-[761px]:items-start max-[761px]:gap-[15px] max-[371px]:flex-wrap">
+          <div className="showroom-heading max-sm:flex-col! max-sm:items-start! max-sm:[&>a]:max-w-none! max-sm:[&>a]:min-h-11! mb-7 flex items-end justify-between gap-[25px] max-[761px]:mb-[23px] max-[761px]:items-start max-[761px]:gap-[15px] max-[371px]:flex-wrap">
             <div>
               <h2>
                 Familiar names.
@@ -680,7 +705,7 @@ export default function ShowroomHome({
           </div>
         </section> */}
  
-          <div className="mx-auto max-w-[180vh] px-4 pt-18 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-[180vh] px-4 pt-18 max-sm:pt-12 sm:px-6 lg:px-8">
 
   {/* TRUSTED BY */}
   <div className="mb-10 flex items-center justify-center">
@@ -745,6 +770,7 @@ export default function ShowroomHome({
     bg-no-repeat
     max-[900px]:min-h-[580px]
     max-[700px]:min-h-[540px]
+    max-lg:min-h-[440px]
   "
   style={{
     backgroundImage: "url('/images/bg.png')",
@@ -764,14 +790,16 @@ export default function ShowroomHome({
       h-[98%]
       w-auto
       object-contain
-      max-[900px]:left-[-3%]
-      max-[900px]:h-[68%]
+      max-[900px]:left-[10%]
+      max-[900px]:h-full
+      max-[900px]:-scale-x-100
+      
     "
   />
 
   {/* LAMP LIGHT GLOW */}
 <div
-  className="pointer-events-none absolute left-[12%] top-[13%] z-[1] h-[360px] w-[420px]"
+  className="pointer-events-none absolute left-[12%] top-[13%] z-[1] h-[360px] w-[420px] max-lg:hidden"
   style={{
     background:
       "linear-gradient(to bottom, rgba(255,205,110,0.34) 0%, rgba(255,215,140,0.18) 45%, rgba(235,230,215,0) 100%)",
@@ -782,24 +810,39 @@ export default function ShowroomHome({
 
   {/* CONTENT */}
   <div
-    className="
-      relative
-      z-20
-      ml-[19%]
-      flex
-      min-h-[540px]
-      max-w-[680px]
-      flex-col
-      justify-center
-      py-5
-      mt-1
-      max-[1100px]:ml-[31%]
-      max-[900px]:ml-[36%]
-      max-[700px]:ml-0
-      max-[700px]:px-7
-      max-[700px]:pt-24
-    "
-  >
+  className="
+    relative
+    z-20
+    ml-[19%]
+    flex
+    min-h-[540px]
+    max-w-[680px]
+    flex-col
+    justify-center
+    py-5
+    mt-1
+
+    max-[1100px]:ml-[31%]
+    max-[900px]:ml-[36%]
+
+    max-lg:ml-9!
+    max-lg:max-w-none!
+    max-lg:min-h-0!
+    max-lg:mt-12!
+    max-lg:mb-0!
+    max-lg:px-8!
+    max-lg:py-14!
+
+    max-[700px]:ml-0
+    max-[700px]:px-7
+    max-[700px]:pt-24
+    max-[700px]:mt-16!
+
+    max-sm:px-6!
+    max-sm:py-12!
+    max-sm:mt-20!
+  "
+>
   
 
   <span
@@ -845,6 +888,7 @@ export default function ShowroomHome({
         w-fit
         items-center
         gap-10
+        max-sm:gap-4 max-sm:max-w-full max-sm:px-5
         border
         border-black
         bg-transparent
@@ -877,6 +921,7 @@ export default function ShowroomHome({
     object-contain
     max-[900px]:h-[62%]
     max-[700px]:hidden
+    
   "
 />
 {/* CLOCK */}
@@ -894,14 +939,16 @@ export default function ShowroomHome({
     w-auto
     -translate-y-1/2
     object-contain
-    max-[1100px]:right-[15%]
+    max-[1100px]:right-[88%]
     max-[900px]:h-[28%]
-    max-[700px]:hidden
+   max-[900px]:top-[6%]
+   max-[700px]:opacity-60
+    
   "
 />
 </section>
-     <section className="w-full bg-[#dda9da]/20 px-6 py-20 sm:px-10 lg:px-16">
-  <div className="mx-auto grid max-w-[1500px] grid-cols-1 gap-14 lg:grid-cols-[0.85fr_1.5fr] lg:gap-20">
+     <section className="w-full bg-white px-6 py-20 sm:px-10 lg:px-16 max-sm:py-12">
+  <div className="mx-auto grid max-w-[1500px] grid-cols-1 gap-14 max-sm:gap-8 lg:grid-cols-[0.85fr_1.5fr] lg:gap-20">
 
     {/* LEFT HEADING */}
     <div className="flex flex-col justify-between">
@@ -929,7 +976,7 @@ export default function ShowroomHome({
     <div className="border-t border-[#c9c0b1]">
 
       {/* FEATURE 01 */}
-      <article className="grid grid-cols-[55px_55px_1fr] items-start gap-5 border-b border-[#c9c0b1] py-9 sm:grid-cols-[70px_65px_1fr] sm:gap-7">
+      <article className="grid grid-cols-[55px_55px_1fr] max-sm:grid-cols-[44px_minmax(0,1fr)] max-sm:gap-x-4 max-sm:gap-y-2 max-sm:[&>span]:col-start-1 max-sm:[&>span]:row-start-1 max-sm:[&>div:nth-child(2)]:col-start-1 max-sm:[&>div:nth-child(2)]:row-start-2 max-sm:[&>div:nth-child(2)]:size-11 max-sm:[&>div:last-child]:col-start-2 max-sm:[&>div:last-child]:row-start-1 max-sm:[&>div:last-child]:row-span-2 max-sm:[&>div:last-child]:min-w-0 max-sm:py-6 items-start gap-5 border-b border-[#c9c0b1] py-9 sm:grid-cols-[70px_65px_1fr] sm:gap-7">
 
         <span className="pt-2 text-[12px] tracking-[0.2em] text-[#93897c]">
           01
@@ -940,7 +987,7 @@ export default function ShowroomHome({
         </div>
 
         <div>
-          <h3 className="font-serif text-[28px] font-normal text-[#2d2924] sm:text-[32px]">
+          <h3 className="font-serif text-[28px] max-sm:text-[25px] max-sm:leading-tight font-normal text-[#2d2924] sm:text-[32px]">
             Delivery made easier
           </h3>
 
@@ -951,7 +998,7 @@ export default function ShowroomHome({
       </article>
 
       {/* FEATURE 02 */}
-      <article className="grid grid-cols-[55px_55px_1fr] items-start gap-5 border-b border-[#c9c0b1] py-9 sm:grid-cols-[70px_65px_1fr] sm:gap-7">
+      <article className="grid grid-cols-[55px_55px_1fr] max-sm:grid-cols-[44px_minmax(0,1fr)] max-sm:gap-x-4 max-sm:gap-y-2 max-sm:[&>span]:col-start-1 max-sm:[&>span]:row-start-1 max-sm:[&>div:nth-child(2)]:col-start-1 max-sm:[&>div:nth-child(2)]:row-start-2 max-sm:[&>div:nth-child(2)]:size-11 max-sm:[&>div:last-child]:col-start-2 max-sm:[&>div:last-child]:row-start-1 max-sm:[&>div:last-child]:row-span-2 max-sm:[&>div:last-child]:min-w-0 max-sm:py-6 items-start gap-5 border-b border-[#c9c0b1] py-9 sm:grid-cols-[70px_65px_1fr] sm:gap-7">
 
         <span className="pt-2 text-[12px] tracking-[0.2em] text-[#93897c]">
           02
@@ -962,7 +1009,7 @@ export default function ShowroomHome({
         </div>
 
         <div>
-          <h3 className="font-serif text-[28px] font-normal text-[#2d2924] sm:text-[32px]">
+          <h3 className="font-serif text-[28px] max-sm:text-[25px] max-sm:leading-tight font-normal text-[#2d2924] sm:text-[32px]">
             Choices you can rely on
           </h3>
 
@@ -974,7 +1021,7 @@ export default function ShowroomHome({
       </article>
 
       {/* FEATURE 03 */}
-      <article className="grid grid-cols-[55px_55px_1fr] items-start gap-5 border-b border-[#c9c0b1] py-9 sm:grid-cols-[70px_65px_1fr] sm:gap-7">
+      <article className="grid grid-cols-[55px_55px_1fr] max-sm:grid-cols-[44px_minmax(0,1fr)] max-sm:gap-x-4 max-sm:gap-y-2 max-sm:[&>span]:col-start-1 max-sm:[&>span]:row-start-1 max-sm:[&>div:nth-child(2)]:col-start-1 max-sm:[&>div:nth-child(2)]:row-start-2 max-sm:[&>div:nth-child(2)]:size-11 max-sm:[&>div:last-child]:col-start-2 max-sm:[&>div:last-child]:row-start-1 max-sm:[&>div:last-child]:row-span-2 max-sm:[&>div:last-child]:min-w-0 max-sm:py-6 items-start gap-5 border-b border-[#c9c0b1] py-9 sm:grid-cols-[70px_65px_1fr] sm:gap-7">
 
         <span className="pt-2 text-[12px] tracking-[0.2em] text-[#93897c]">
           03
@@ -985,7 +1032,7 @@ export default function ShowroomHome({
         </div>
 
         <div>
-          <h3 className="font-serif text-[28px] font-normal text-[#2d2924] sm:text-[32px]">
+          <h3 className="font-serif text-[28px] max-sm:text-[25px] max-sm:leading-tight font-normal text-[#2d2924] sm:text-[32px]">
             Local support, close by
           </h3>
 
