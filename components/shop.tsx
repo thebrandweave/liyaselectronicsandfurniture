@@ -2139,7 +2139,7 @@ export default function Shop({ path }: { path: string[] }) {
         ) : (
 
           /* NO ORDERS */
-          <div className="mx-auto flex min-h-[400px] max-w-[650px] flex-col items-center justify-center bg-[#faf9f7] px-6 py-14 text-center">
+          <div className="mx-auto flex min-h-[400px] max-w-[650px] flex-col items-center justify-center bg-[#dda9da]/20 px-6 py-14 text-center">
 
             <div className="grid h-16 w-16 place-items-center rounded-full bg-[#dda9da]/25 text-[#9b0090]">
               <ShoppingBag size={27} />
@@ -2158,7 +2158,7 @@ export default function Shop({ path }: { path: string[] }) {
               for your next home upgrade.
             </p>
 
-            <a
+            <Link
               href="/products"
               className="
                 mt-7
@@ -2177,9 +2177,9 @@ export default function Shop({ path }: { path: string[] }) {
                 hover:bg-[#720069]
               "
             >
-              Explore the collection
-              <ArrowRight size={16} />
-            </a>
+              <span className="text-white">Explore the collection</span>
+             <span className="text-white"> <ArrowRight size={16} /></span>
+            </Link>
           </div>
         )}
       </TabsContent>
