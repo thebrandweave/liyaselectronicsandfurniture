@@ -71,7 +71,7 @@ header {
   mix-blend-mode: multiply;
 }
 .eyebrow {
-  color: #85766d;
+  color: #9b0090;
 }
 .section-heading h2,
 .collection-heading h1,
@@ -268,10 +268,10 @@ main > h1,
 .tiny-label {
   display: block;
   font-size: 10px;
-  letter-spacing: 1.8px;
-  color: #82746a;
+  letter-spacing: 2px;
+  color: #9b0090;
   margin-bottom: 14px;
-  font-weight: 400;
+  font-weight: 600;
 }
 .popular-item {
   min-width: 0;
@@ -796,7 +796,7 @@ footer {
     aspect-ratio: 1.15/1;
   }
   .popular-item img {
-    max-height: 190px;
+    /* max-height: 190px; */
   }
   .showroom-main > section {
     padding-top: 55px;
@@ -941,8 +941,8 @@ footer {
     margin-bottom: 12px;
   }
   .popular-item > div {
-    aspect-ratio: 1/1.12;
-    padding: 15px 7px;
+    aspect-ratio: 0/1.12;
+    padding: 0px 0px;
   }
   .popular-item > span {
     font-size: 12px;

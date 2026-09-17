@@ -1336,7 +1336,7 @@ export default function Shop({ path }: { path: string[] }) {
                 {/* IMAGE */}
                 <a
                   href={"/products/" + p.id}
-                  className="block overflow-hidden bg-[#f5f3ef]"
+                  className="block overflow-hidden "
                 >
                   <img
                     src={p.image}
@@ -1345,7 +1345,7 @@ export default function Shop({ path }: { path: string[] }) {
                       h-[110px]
                       w-full
                       object-contain
-                      p-2
+                      p-0
                       transition-transform
                       duration-300
                       hover:scale-105
@@ -1362,7 +1362,7 @@ export default function Shop({ path }: { path: string[] }) {
                     </h3>
                   </a>
 
-                  <p className="mt-2 text-[15px] font-semibold text-[#26231f]">
+                  <p className="mt-2 text-[15px] font-semibold text-[#dda9da]">
                     {money(p.price)}
                   </p>
 
@@ -1468,11 +1468,16 @@ export default function Shop({ path }: { path: string[] }) {
 
       {/* ORDER SUMMARY */}
       <aside className="lg:sticky lg:top-32">
-        <div className="bg-[#f4f0e9] p-6 sm:p-8">
-          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#9b0090]">
+        <div className="bg-[#dda9da]/20 p-6 sm:p-8">
+<div className="flex items-center justify-between gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#9b0090]">
             Your order
           </span>
-
+<span>   <ShoppingBag
+              size={20}
+              className="mt-[2px] shrink-0 text-[#9b0090]"
+            /></span>
+</div>
           <h2 className="mt-2 font-serif text-[32px] tracking-[-0.02em] text-[#26231f]">
             Order summary
           </h2>
@@ -1498,14 +1503,14 @@ export default function Shop({ path }: { path: string[] }) {
                   Total
                 </span>
 
-                <strong className="font-sans font-semibold text-[26px] text-[#9b0090]">
+                <strong className="tracking-[-0.02em] font-semibold text-[26px] text-[#9b0090]">
                   {money(total)}
                 </strong>
               </div>
             </div>
           </div>
 
-          <a
+          <Link
             href="/checkout"
             className="
               mt-8
@@ -1527,28 +1532,18 @@ export default function Shop({ path }: { path: string[] }) {
               hover:bg-[#720069]
             "
           >
-            Proceed to checkout
-            <ArrowRight size={16} />
-          </a>
+            <span className="text-white font-inter">Proceed to checkout</span>
+            <span className="text-white "><ArrowRight size={16} /></span>
+          </Link>
 
-          <div className="mt-5 flex items-start gap-2 border-t border-[#26231f]/10 pt-5">
-            <ShoppingBag
-              size={16}
-              className="mt-[2px] shrink-0 text-[#9b0090]"
-            />
-
-            <small className="text-[12px] leading-5 text-[#7a7167]">
-              Sample prices shown. Delivery charges and final
-              availability are confirmed by the store.
-            </small>
-          </div>
+     
         </div>
       </aside>
     </div>
   ) : (
 
     /* EMPTY CART */
-    <div className="mx-auto flex min-h-[420px] max-w-[650px] flex-col items-center justify-center border border-[#26231f]/10 bg-[#faf9f7] px-6 py-16 text-center">
+    <div className="mx-auto flex min-h-[420px] max-w-[650px] flex-col items-center justify-center  bg-[#dda9da]/20 px-6 py-16 text-center">
       <div className="grid h-16 w-16 place-items-center rounded-full bg-[#dda9da]/25 text-[#9b0090]">
         <ShoppingBag size={28} />
       </div>
@@ -1566,7 +1561,7 @@ export default function Shop({ path }: { path: string[] }) {
         for everyday living.
       </p>
 
-      <a
+      <Link
         href="/products"
         className="
           mt-8
@@ -1585,9 +1580,9 @@ export default function Shop({ path }: { path: string[] }) {
           hover:bg-[#720069]
         "
       >
-        Start exploring
-        <ArrowRight size={16} />
-      </a>
+        <span className="text-white font-inter">Start exploring</span>
+        <span className="text-white "><ArrowRight size={16} /></span>
+      </Link>
     </div>
   )}
 </main>
@@ -1601,20 +1596,20 @@ export default function Shop({ path }: { path: string[] }) {
                   <p>
                     Your Order has been Placed.
                   </p>
-                  <a className="btn" href="/account">
+                  <Link className="btn" href="/account">
                     View my orders
-                  </a>
+                  </Link>
                 </div>
               ) : !user ? (
                 <div className="empty">
                   <h2>Sign in to save your order</h2>
-                  <a className="btn" href="/login">
+                  <Link className="btn" href="/login">
                     Sign in
-                  </a>
+                  </Link>
                 </div>
               ) : !cart.length ? (
                 <div className="empty">
-                  Your cart is empty. <a href="/products">Browse products</a>
+                  Your cart is empty. <Link href="/products">Browse products</Link>
                 </div>
               ) : (
                 <form
@@ -3439,7 +3434,7 @@ export default function Shop({ path }: { path: string[] }) {
         aria-hidden="true"
         className="pointer-events-none absolute bottom-[-52px] md:bottom-[-135px] right-0 select-none  text-[125px] font-extrabold leading-none tracking-[-0.01em] md:tracking-[-0.05em] text-[#dda9da]/30  md:text-[#dda9da]/60 sm:text-[110px] lg:text-[350px]"
       >
-        LIYAS
+        LIYA<span className="font-light">'</span>S
       </div>
 
     </div>

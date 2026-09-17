@@ -953,7 +953,7 @@ export default function ShowroomHome({
     {/* LEFT HEADING */}
     <div className="flex flex-col justify-between">
       <div>
-        <span className="mb-5 block text-[11px] font-medium uppercase tracking-[0.32em] text-[#82796d]">
+        <span className="mb-5 block text-[11px] font-medium uppercase tracking-[0.32em] text-[#9b0090]">
           WHY LIYA’S
         </span>
 
@@ -978,7 +978,7 @@ export default function ShowroomHome({
       {/* FEATURE 01 */}
       <article className="grid grid-cols-[55px_55px_1fr] max-sm:grid-cols-[44px_minmax(0,1fr)] max-sm:gap-x-4 max-sm:gap-y-2 max-sm:[&>span]:col-start-1 max-sm:[&>span]:row-start-1 max-sm:[&>div:nth-child(2)]:col-start-1 max-sm:[&>div:nth-child(2)]:row-start-2 max-sm:[&>div:nth-child(2)]:size-11 max-sm:[&>div:last-child]:col-start-2 max-sm:[&>div:last-child]:row-start-1 max-sm:[&>div:last-child]:row-span-2 max-sm:[&>div:last-child]:min-w-0 max-sm:py-6 items-start gap-5 border-b border-[#c9c0b1] py-9 sm:grid-cols-[70px_65px_1fr] sm:gap-7">
 
-        <span className="pt-2 text-[12px] tracking-[0.2em] text-[#93897c]">
+        <span className="pt-2 text-[12px] tracking-[0.2em] text-[#9b0090]">
           01
         </span>
 
@@ -1000,7 +1000,7 @@ export default function ShowroomHome({
       {/* FEATURE 02 */}
       <article className="grid grid-cols-[55px_55px_1fr] max-sm:grid-cols-[44px_minmax(0,1fr)] max-sm:gap-x-4 max-sm:gap-y-2 max-sm:[&>span]:col-start-1 max-sm:[&>span]:row-start-1 max-sm:[&>div:nth-child(2)]:col-start-1 max-sm:[&>div:nth-child(2)]:row-start-2 max-sm:[&>div:nth-child(2)]:size-11 max-sm:[&>div:last-child]:col-start-2 max-sm:[&>div:last-child]:row-start-1 max-sm:[&>div:last-child]:row-span-2 max-sm:[&>div:last-child]:min-w-0 max-sm:py-6 items-start gap-5 border-b border-[#c9c0b1] py-9 sm:grid-cols-[70px_65px_1fr] sm:gap-7">
 
-        <span className="pt-2 text-[12px] tracking-[0.2em] text-[#93897c]">
+        <span className="pt-2 text-[12px] tracking-[0.2em] text-[#9b0090]">
           02
         </span>
 
@@ -1023,7 +1023,7 @@ export default function ShowroomHome({
       {/* FEATURE 03 */}
       <article className="grid grid-cols-[55px_55px_1fr] max-sm:grid-cols-[44px_minmax(0,1fr)] max-sm:gap-x-4 max-sm:gap-y-2 max-sm:[&>span]:col-start-1 max-sm:[&>span]:row-start-1 max-sm:[&>div:nth-child(2)]:col-start-1 max-sm:[&>div:nth-child(2)]:row-start-2 max-sm:[&>div:nth-child(2)]:size-11 max-sm:[&>div:last-child]:col-start-2 max-sm:[&>div:last-child]:row-start-1 max-sm:[&>div:last-child]:row-span-2 max-sm:[&>div:last-child]:min-w-0 max-sm:py-6 items-start gap-5 border-b border-[#c9c0b1] py-9 sm:grid-cols-[70px_65px_1fr] sm:gap-7">
 
-        <span className="pt-2 text-[12px] tracking-[0.2em] text-[#93897c]">
+        <span className="pt-2 text-[12px] tracking-[0.2em] text-[#9b0090]">
           03
         </span>
 
