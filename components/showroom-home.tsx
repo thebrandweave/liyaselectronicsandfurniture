@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight,Heart } from "lucide-react";
 // import { useState } from "react";
 import { ArrowUpRight, Plus, MapPin, Truck, ShieldCheck, Headphones } from "lucide-react";
@@ -73,12 +73,196 @@ const rooms = [
     category: "Beds",
   },
 ];
+export type HomepagePopup = {
+  enabled: boolean;
+  title: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+};
+
+// Pass the saved admin setting into ShowroomHome as its popup prop.
+function HomepageAnnouncement({ popup }: { popup?: HomepagePopup | null }) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const shown = useRef(false);
+  const [delayElapsed, setDelayElapsed] = useState(false);
+  const [open, setOpen] = useState(false);
+  const safeImage = popup?.image &&
+    (/^https:\/\//i.test(popup.image) || /^\/(?!\/)/.test(popup.image))
+    ? popup.image : undefined;
+  const hasContent = Boolean(popup?.title?.trim() || popup?.description?.trim() || safeImage);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDelayElapsed(true), 10_000);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (delayElapsed && popup?.enabled && hasContent && !shown.current) {
+      shown.current = true;
+      setOpen(true);
+    }
+    if (!popup?.enabled || !hasContent) setOpen(false);
+  }, [delayElapsed, popup?.enabled, hasContent]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!open || !dialog) return;
+    const previousFocus = document.activeElement instanceof HTMLElement
+      ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    dialog.showModal();
+    document.body.style.overflow = "hidden";
+    return () => {
+      dialog.close();
+      document.body.style.overflow = previousOverflow;
+      if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
+    };
+  }, [open]);
+
+  if (!popup) return null;
+  return (
+    <dialog
+  ref={dialogRef}
+  aria-labelledby="homepage-popup-title"
+  aria-describedby={
+    popup.description ? "homepage-popup-description" : undefined
+  }
+  onCancel={(event) => {
+    event.preventDefault();
+    setOpen(false);
+  }}
+  onClick={(event) => {
+    if (event.target !== event.currentTarget) return;
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+
+    if (
+      event.clientX < bounds.left ||
+      event.clientX > bounds.right ||
+      event.clientY < bounds.top ||
+      event.clientY > bounds.bottom
+    ) {
+      setOpen(false);
+    }
+  }}
+  className="
+    fixed inset-0 m-auto
+    max-h-[90dvh]
+    w-[calc(100%_-_2rem)] max-w-[740px]
+    overflow-y-auto
+    rounded-none border-0
+    bg-white p-2 text-[#222]
+    shadow-xl backdrop:bg-black/45
+  "
+>
+  <button
+    type="button"
+    autoFocus
+    aria-label="Close announcement"
+    onClick={() => setOpen(false)}
+    className="
+      absolute right-4 top-4 z-10
+      flex size-11 items-center justify-center
+      border-0 bg-white/95 p-0
+      text-current
+      
+      sm:right-4 sm:top-4
+    "
+  >
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      aria-hidden="true"
+    >
+      <path d="M5 5L19 19M19 5L5 19" />
+    </svg>
+  </button>
+
+  <div
+    className={`grid ${
+      safeImage ? "md:grid-cols-[42%_58%]" : "grid-cols-1"
+    }`}
+  >
+    {safeImage && (
+      <div className="relative min-w-0 bg-transparent ">
+        <img
+          src={safeImage}
+          alt={popup.imageAlt || popup.title || "Store announcement"}
+          className="
+            block h-[260px] w-full object-cover
+            sm:h-[320px]
+            md:absolute md:inset-0 md:h-full
+          "
+        />
+      </div>
+    )}
+
+    <div
+      className="
+        flex min-w-0 flex-col justify-center
+        px-5 py-10
+        sm:px-8 sm:py-12
+        md:min-h-[385px] md:px-9 md:py-20
+        lg:px-10
+      "
+    >
+      <h2
+        id="homepage-popup-title"
+        className="
+          m-0! whitespace-pre-wrap break-words
+          font-serif! text-[26px]! font-medium!
+          leading-[1.01]! tracking-normal!
+          text-[#222]!
+          sm:text-[30px]! lg:text-[33px]!
+        "
+      >
+        {popup.title?.trim() || "An update from Liya’s"}
+      </h2>
+
+      {popup.description && (
+        <p
+          id="homepage-popup-description"
+          className="
+            mb-0! mt-3!
+            whitespace-pre-wrap break-words
+            text-[15px]! leading-[1.7]!
+            text-[#555]!
+            sm:text-[16px]!
+          "
+        >
+          {popup.description}
+        </p>
+      )}
+    <a
+  href="/offers"
+  className="
+    mt-6 inline-flex  w-fit items-center justify-center gap-3
+    border border-current bg-transparent!
+    px-6 py-3 text-sm font-medium text-current 
+  "
+>
+  View offers
+  <ArrowUpRight    size={18} aria-hidden="true" />
+</a>
+    </div>
+  </div>
+</dialog>
+  );
+}
+
 export default function ShowroomHome({
 
   
   products,
   renderProduct,
+  popup,
 }: {
+  popup?: HomepagePopup | null;
   products: Product[];
   renderProduct: (p: Product) => ReactNode;
 }) {
@@ -264,6 +448,7 @@ export default function ShowroomHome({
 );
   return (
     <div className="showroom-home w-full overflow-clip max-lg:[&_svg]:shrink-0">
+      <HomepageAnnouncement popup={popup} />
       <Carousel
         className="showroom-hero"
         opts={{ loop: true, duration: 0 }}

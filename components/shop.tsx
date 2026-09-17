@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 // import InteriorMotion from "@/components/interior-motion";
-import ShowroomHome from "@/components/showroom-home";
+import ShowroomHome, { type HomepagePopup } from "@/components/showroom-home";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -111,6 +111,8 @@ export default function Shop({ path }: { path: string[] }) {
     [admin, setAdmin] = useState<any>(null),
     [edit, setEdit] = useState<any>(null),
     [uploadingImage, setUploadingImage] = useState(false);
+  const [customerReviews, setCustomerReviews] = useState<CustomerReview[]>([]);
+  const [homepagePopup, setHomepagePopup] = useState<HomepagePopup | null>(null);
   const [megaMenu, setMegaMenu] = useState<"Electronics" | "Furniture" | null>(
     null,
   );
@@ -179,6 +181,8 @@ export default function Shop({ path }: { path: string[] }) {
       const d: any = await r.json();
       if (!r.ok) throw Error(d.error);
       setProducts(d.products);
+      setHomepagePopup(d.popup || null);
+      setCustomerReviews(Array.isArray(d.reviews) ? d.reviews : []);
       setUser(d.user);
       setOrders(d.orders);
       if (d.state) {
@@ -470,7 +474,7 @@ export default function Shop({ path }: { path: string[] }) {
       (p) =>
         (!["electronics", "furniture"].includes(route) ||
           p.group.toLowerCase() === route) &&
-        (route !== "offers" || p.original > p.price) &&
+        (route !== "offers" || hasProductOffer(p)) &&
         (route !== "wishlist" || wish.includes(p.id)) &&
         (category === "All" || p.category === category) &&
         (brand === "All" || p.brand === brand) &&
@@ -486,7 +490,7 @@ export default function Shop({ path }: { path: string[] }) {
         : sort === "high"
           ? b.price - a.price
           : sort === "discount"
-            ? 1 - b.price / b.original - (1 - a.price / a.original)
+            ? (hasProductOffer(b) ? 1 - b.price / b.original : 0) - (hasProductOffer(a) ? 1 - a.price / a.original : 0)
             : 0,
     );
   function card(p: Product) {
@@ -496,9 +500,9 @@ export default function Shop({ path }: { path: string[] }) {
           <a href={"/products/" + p.id}>
             <img src={p.image} alt={p.name} loading="lazy" />
           </a>
-          <span className="discount">
+          {hasProductOffer(p) && <span className="discount">
             {Math.round((1 - p.price / p.original) * 100)}% OFF
-          </span>
+          </span>}
           <button
             className={"heart " + (wish.includes(p.id) ? "selected" : "")}
             aria-label={"Save " + p.name}
@@ -517,7 +521,7 @@ export default function Shop({ path }: { path: string[] }) {
           </div>
           <div className="price">
             <strong>{money(p.price)}</strong>
-            <del>{money(p.original)}</del>
+            {hasProductOffer(p) && <del>{money(p.original)}</del>}
           </div>
         </div>
       </article>
@@ -882,7 +886,10 @@ export default function Shop({ path }: { path: string[] }) {
             </div>
           )}
           {route === "home" ? (
-            <ShowroomHome products={products} renderProduct={card} />
+            <>
+              <ShowroomHome products={products} renderProduct={card} popup={homepagePopup} />
+              <CustomerReviewsSection reviews={customerReviews} />
+            </>
           ) : [
               "products",
               "electronics",
@@ -1190,7 +1197,7 @@ export default function Shop({ path }: { path: string[] }) {
                       <h1>{p.name}</h1>
                       <p>{p.description}</p>
                       <div className="detail-price">
-                        {money(p.price)} <del>{money(p.original)}</del>
+                        {money(p.price)} {hasProductOffer(p) && <del>{money(p.original)}</del>}
                       </div>
                      
                       <div className="quantity">
@@ -2958,6 +2965,7 @@ export default function Shop({ path }: { path: string[] }) {
                         "offers",
                         "reviews",
                         "enquiries",
+                        "popup",
                       ].map((v) => (
                         <TabsTrigger
                           value={v}
@@ -2968,14 +2976,34 @@ export default function Shop({ path }: { path: string[] }) {
                         </TabsTrigger>
                       ))}
                     </TabsList>
+                    <TabsContent value="offers">
+                      <ProductOffersManager products={admin.products} onSave={async (product) => {
+                        await api("admin", product, { kind: "product", id: product.id });
+                        setAdmin((current: any) => ({ ...current,
+                          products: current.products.map((item: Product) => item.id === product.id ? product : item),
+                        }));
+                        setProducts((current) => current.map((item) => item.id === product.id ? product : item));
+                      }} />
+                    </TabsContent>
+                    <TabsContent value="popup">
+                      <HomepagePopupSettings
+                        initial={admin.popup}
+                        onSaved={(popup) => {
+                          setAdmin((current: any) => ({ ...current, popup }));
+                          setHomepagePopup(popup.enabled ? popup : null);
+                        }}
+                      />
+                    </TabsContent>
                     {[
                       "products",
                       "categories",
                       "brands",
-                      "offers",
                       "reviews",
                     ].map((v) => (
                       <TabsContent key={v} value={v}>
+                        {v === "reviews" && <p className="mb-5 text-sm text-stone-600">
+                          Add genuine customer feedback, choose a rating from 1 to 5, and tick Published to display it at the bottom of the homepage.
+                        </p>}
                         <button
                           className="mb-6 inline-flex w-full items-center justify-center gap-2 bg-[#9b0090] px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] text-white transition hover:bg-[#720069] sm:w-auto"
                           onClick={() =>
@@ -2999,7 +3027,9 @@ export default function Shop({ path }: { path: string[] }) {
                                       description: "",
                                       featured: false,
                                     }
-                                  : { name: "", description: "" },
+                                  : v === "reviews"
+                                    ? { name: "", description: "", rating: 5, published: false }
+                                    : { name: "", description: "" },
                             })
                           }
                         >
@@ -3032,7 +3062,7 @@ export default function Shop({ path }: { path: string[] }) {
               ? "category"
               : v.slice(0, -1),
           id: p.id,
-          data: p,
+          data: v === "reviews" ? { rating: 5, published: false, ...p } : p,
         })
       }
     >
@@ -3183,6 +3213,15 @@ export default function Shop({ path }: { path: string[] }) {
                       onSubmit={async (e) => {
                         e.preventDefault();
                         try {
+                          if (edit.kind === "review") {
+                            if (!String(edit.data.name || "").trim() || !String(edit.data.description || "").trim()) {
+                              throw new Error("Enter the customer name and their review.");
+                            }
+                            const rating = Number(edit.data.rating);
+                            if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+                              throw new Error("Rating must be a whole number from 1 to 5.");
+                            }
+                          }
                           await api("admin", edit.data, {
                             kind: edit.kind,
                             id: edit.id,
@@ -3464,4 +3503,296 @@ export default function Shop({ path }: { path: string[] }) {
       </a>
     </>
   );
+}
+
+
+const EMPTY_HOMEPAGE_POPUP: HomepagePopup = {
+  enabled: false,
+  title: "",
+  description: "",
+  image: "",
+  imageAlt: "",
+};
+
+function HomepagePopupSettings({ initial, onSaved }: {
+  initial?: HomepagePopup | null;
+  onSaved: (popup: HomepagePopup) => void;
+}) {
+  const [draft, setDraft] = useState<HomepagePopup>(() => ({ ...EMPTY_HOMEPAGE_POPUP, ...initial }));
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [failure, setFailure] = useState("");
+  const uploadLock = useRef(false);
+  const saveLock = useRef(false);
+  const previewImage = draft.image && (
+    /^https:\/\//i.test(draft.image) || /^\/(?!\/)/.test(draft.image)
+  ) ? draft.image : undefined;
+
+  useEffect(() => {
+    setDraft({ ...EMPTY_HOMEPAGE_POPUP, ...initial });
+  }, [initial]);
+
+  async function upload(file: File) {
+    if (uploadLock.current || saveLock.current) return;
+    setFailure("");
+    setMessage("");
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setFailure("Choose a JPG, PNG, or WebP image.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setFailure("Choose an image smaller than 5 MB.");
+      return;
+    }
+    uploadLock.current = true;
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append("image", file);
+      const response = await fetch("/api/shop/upload", { method: "POST", body: form });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to upload image.");
+      if (typeof result.url !== "string" || !(
+        result.url.startsWith("/images/") ||
+        result.url.startsWith("/api/shop/image/") ||
+        /^https:\/\//i.test(result.url)
+      )) throw new Error("The upload did not return a supported image URL.");
+      setDraft((current) => ({ ...current, image: result.url }));
+      setMessage("Image uploaded. Save the popup to apply it.");
+    } catch (error) {
+      setFailure(error instanceof Error ? error.message : "Unable to upload image.");
+    } finally {
+      uploadLock.current = false;
+      setUploading(false);
+    }
+  }
+
+  async function savePopup() {
+    if (uploadLock.current || saveLock.current) return;
+    setFailure("");
+    setMessage("");
+    if (draft.enabled && !(draft.title.trim() || draft.description?.trim() || draft.image?.trim())) {
+      setFailure("Add an image, title, or description before enabling the popup.");
+      return;
+    }
+    saveLock.current = true;
+    setSaving(true);
+    try {
+      const response = await fetch("/api/shop", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "save-popup", data: draft }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to save popup.");
+      if (!result.popup) throw new Error("The API did not return saved popup settings. Install the updated shop API.");
+      onSaved(result.popup);
+      setMessage(result.popup.enabled
+        ? "Saved. The popup will appear after 10 seconds on the homepage."
+        : "Saved. The homepage popup is disabled.");
+    } catch (error) {
+      setFailure(error instanceof Error ? error.message : "Unable to save popup.");
+    } finally {
+      saveLock.current = false;
+      setSaving(false);
+    }
+  }
+
+  const fieldClass = "mt-2 w-full rounded-none border border-stone-300 bg-white px-3 py-3 text-base text-stone-900 focus:outline-2 focus:outline-[#9b0090]";
+  return (
+    <section className="grid gap-8 border border-stone-200 bg-white p-5 sm:p-8 lg:grid-cols-2">
+      <form onSubmit={(event) => { event.preventDefault(); void savePopup(); }}>
+        <h2 className="font-serif text-3xl">Homepage popup</h2>
+        <p className="mt-2 text-sm leading-6 text-stone-600">Show an announcement after visitors spend 10 seconds on the homepage. Use an image, text, or both.</p>
+        <fieldset disabled={saving || uploading} className="mt-6 min-w-0 space-y-5 disabled:opacity-60">
+          <label className="flex min-h-11 items-center gap-3 text-sm font-medium">
+            <input type="checkbox" checked={draft.enabled} className="size-5 accent-[#9b0090]"
+              onChange={(event) => setDraft({ ...draft, enabled: event.target.checked })} />
+            Enable homepage popup
+          </label>
+          <label className="block text-sm">Title
+            <input className={fieldClass} maxLength={150} value={draft.title}
+              onChange={(event) => setDraft({ ...draft, title: event.target.value })} />
+          </label>
+          <label className="block text-sm">Description
+            <textarea className={fieldClass} rows={5} maxLength={3000} value={draft.description || ""}
+              onChange={(event) => setDraft({ ...draft, description: event.target.value })} />
+          </label>
+          <label className="block text-sm">Upload image (optional)
+            <input type="file" accept="image/jpeg,image/png,image/webp" className={fieldClass}
+              onChange={(event) => {
+                const file = event.currentTarget.files?.[0];
+                event.currentTarget.value = "";
+                if (file) void upload(file);
+              }} />
+            <span className="mt-2 block text-xs text-stone-500">JPG, PNG, or WebP, up to 5 MB. Your upload server may apply a smaller limit.</span>
+          </label>
+          {draft.image && <button type="button" className="min-h-11 text-sm underline"
+            onClick={() => setDraft({ ...draft, image: "", imageAlt: "" })}>Remove image from popup</button>}
+          <label className="block text-sm">Image description
+            <input className={fieldClass} maxLength={200} value={draft.imageAlt || ""}
+              onChange={(event) => setDraft({ ...draft, imageAlt: event.target.value })} />
+          </label>
+          <button type="submit" className="min-h-12 w-full bg-[#9b0090] px-6 py-3 text-white sm:w-auto">
+            {saving ? "Saving…" : uploading ? "Uploading…" : "Save popup"}
+          </button>
+        </fieldset>
+        {failure && <p role="alert" className="mt-4 text-sm text-red-700">{failure}</p>}
+        {message && <p role="status" className="mt-4 text-sm text-green-800">{message}</p>}
+      </form>
+      <div className="min-w-0">
+        <h3 className="mb-4 text-sm font-medium">Preview · {draft.enabled ? "Enabled" : "Disabled"}</h3>
+        <div className="overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm">
+          {previewImage && <img src={previewImage} alt={draft.imageAlt || draft.title || "Popup preview"}
+            className="max-h-80 w-full object-contain" />}
+          <div className="space-y-4 p-6">
+            <h2 className="break-words font-serif text-3xl">{draft.title.trim() || "An update from Liya’s"}</h2>
+            <p className="whitespace-pre-wrap break-words text-sm leading-7 text-stone-600">{draft.description || "Your description will appear here."}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+function hasProductOffer(product: Product) {
+  return Number.isFinite(product.price) && Number.isFinite(product.original) &&
+    product.price >= 0 && product.original > product.price;
+}
+
+function ProductOffersManager({ products, onSave }: {
+  products: Product[];
+  onSave: (product: Product) => Promise<void>;
+}) {
+  const [search, setSearch] = useState("");
+  const visible = products.filter((product) =>
+    `${product.name} ${product.brand} ${product.category}`.toLowerCase().includes(search.toLowerCase()));
+  return <section className="space-y-6">
+    <div>
+      <h2 className="font-serif text-3xl">Product offers</h2>
+      <p className="mt-2 text-sm text-stone-600">Set a regular price and a lower offer price for each product. Only discounted products appear on the Offers page.</p>
+      <p className="mt-2 text-sm">{products.filter(hasProductOffer).length} active offers · {products.length} products</p>
+    </div>
+    <label className="block text-sm">Search products
+      <input type="search" value={search} onChange={(event) => setSearch(event.target.value)}
+        className="mt-2 w-full border border-stone-300 bg-white px-4 py-3" placeholder="Name, brand, or category" />
+    </label>
+    <div className="space-y-4">
+      {visible.map((product) => <ProductOfferEditor key={product.id} product={product} onSave={onSave} />)}
+      {!visible.length && <p className="py-8 text-center text-stone-600">No matching products.</p>}
+    </div>
+  </section>;
+}
+
+function ProductOfferEditor({ product, onSave }: {
+  product: Product;
+  onSave: (product: Product) => Promise<void>;
+}) {
+  const [regular, setRegular] = useState(String(Math.max(product.original || 0, product.price)));
+  const [offer, setOffer] = useState(hasProductOffer(product) ? String(product.price) : "");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const lock = useRef(false);
+  useEffect(() => {
+    setRegular(String(Math.max(product.original || 0, product.price)));
+    setOffer(hasProductOffer(product) ? String(product.price) : "");
+  }, [product.price, product.original]);
+
+  async function persist(remove = false) {
+    if (lock.current) return;
+    setError(""); setMessage("");
+    // Removing restores the last saved regular price, not unsaved field edits.
+    const original = remove ? product.original : Number(regular);
+    const price = remove ? original : Number(offer);
+    if (!Number.isFinite(original) || original <= 0 || !Number.isFinite(price) || price < 0 ||
+        (!remove && (!regular.trim() || !offer.trim() || price >= original))) {
+      setError("Enter a regular price above zero and an offer price below it."); return;
+    }
+    if (Math.abs(original * 100 - Math.round(original * 100)) > 0.00001 ||
+        Math.abs(price * 100 - Math.round(price * 100)) > 0.00001) {
+      setError("Use no more than two decimal places."); return;
+    }
+    lock.current = true; setBusy(true);
+    try {
+      await onSave({ ...product, original, price });
+      setMessage(remove ? "Offer removed. Regular price restored." : "Offer saved.");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Unable to save offer.");
+    } finally { lock.current = false; setBusy(false); }
+  }
+  return <form onSubmit={(event) => { event.preventDefault(); void persist(); }}
+    className="border border-stone-200 bg-white p-4 sm:p-6">
+    <div className="flex items-center gap-4">
+      <img src={product.image} alt={product.name} loading="lazy" className="size-20 shrink-0 bg-stone-50 object-contain" />
+      <div className="min-w-0">
+        <h3 className="break-words font-medium">{product.name}</h3>
+        <p className="text-sm text-stone-500">{product.category} · {product.brand}</p>
+        <p className="mt-1 text-sm">{hasProductOffer(product)
+          ? `Active offer: ${money(product.price)} (${Math.round((1 - product.price / product.original) * 100)}% off)`
+          : `No offer · ${money(product.price)}`}</p>
+      </div>
+    </div>
+    <fieldset disabled={busy} className="mt-5 grid min-w-0 gap-4 sm:grid-cols-2">
+      <label className="text-sm">Regular price (₹)
+        <input type="number" required min="0.01" step="0.01" value={regular}
+          onChange={(event) => setRegular(event.target.value)} className="mt-2 w-full border border-stone-300 px-3 py-3" />
+      </label>
+      <label className="text-sm">Offer price (₹)
+        <input type="number" required min="0" step="0.01" value={offer}
+          onChange={(event) => setOffer(event.target.value)} className="mt-2 w-full border border-stone-300 px-3 py-3" />
+      </label>
+      <div className="flex flex-wrap gap-3 sm:col-span-2">
+        <button type="submit" className="min-h-11 bg-[#9b0090] px-5 py-3 text-sm text-white disabled:opacity-50">
+          {busy ? "Saving…" : hasProductOffer(product) ? "Update offer" : "Add offer"}
+        </button>
+        {hasProductOffer(product) && <button type="button" onClick={() => void persist(true)}
+          className="min-h-11 border border-current bg-transparent px-5 py-3 text-sm">Remove offer</button>}
+      </div>
+    </fieldset>
+    {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+    {message && <p role="status" className="mt-3 text-sm text-green-800">{message}</p>}
+  </form>;
+}
+
+
+type CustomerReview = {
+  id: string;
+  name: string;
+  description: string;
+  rating: number;
+  published: boolean;
+};
+
+function CustomerReviewsSection({ reviews }: { reviews: CustomerReview[] }) {
+  const published = reviews.filter((review) => review.published === true &&
+    typeof review.name === "string" && review.name.trim() &&
+    typeof review.description === "string" && review.description.trim() &&
+    Number.isInteger(review.rating) && review.rating >= 1 && review.rating <= 5);
+  if (!published.length) return null;
+  return <section aria-labelledby="customer-reviews-heading" className="bg-[#dda9da]/20 px-5 py-14 sm:px-10 sm:py-16 lg:px-16">
+    <div className="mx-auto max-w-[1500px]">
+      <div className="mb-9 text-center">
+        <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#9b0090]">Customer reviews</span>
+        <h2 id="customer-reviews-heading" className="mt-3 font-serif text-4xl leading-tight text-[#2f2a24] sm:text-5xl">Words from our customers.</h2>
+      </div>
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {published.map((review) => <figure key={review.id} className="m-0 flex min-w-0 flex-col border border-stone-200  bg-white p-6 sm:p-8">
+          <div role="img" aria-label={`${review.rating} out of 5 stars`} className="mb-5 flex gap-1 text-[#9b0090]">
+            {[1, 2, 3, 4, 5].map((star) => <svg key={star} aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"
+              fill={star <= review.rating ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5">
+              <path d="m12 3 2.78 5.63L21 9.54l-4.5 4.39 1.06 6.2L12 17.2l-5.56 2.93 1.06-6.2L3 9.54l6.22-.91L12 3Z" />
+            </svg>)}
+          </div>
+          <blockquote className="m-0 flex-1 whitespace-pre-wrap break-words text-base leading-7 text-stone-600">{review.description}</blockquote>
+          <figcaption className="mt-7 flex items-center gap-3 border-t border-stone-100 pt-5">
+            <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-full bg-[#f6eff5] font-medium text-[#9b0090]">{review.name.trim().slice(0, 1).toUpperCase()}</span>
+            <span className="min-w-0 break-words text-sm font-medium text-stone-900">{review.name}</span>
+          </figcaption>
+        </figure>)}
+      </div>
+    </div>
+  </section>;
 }
