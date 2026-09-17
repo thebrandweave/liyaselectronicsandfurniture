@@ -835,7 +835,7 @@ footer {
   align-items: center;
   margin: 20px 0;
   font-size: 13px;
-  color: #879080;
+  color: #9b0090;
   text-transform: capitalize;
 }
 .collection-heading {
@@ -932,19 +932,20 @@ main > h1 {
   border: 1px solid #ddd;
 }
 .detail {
+  max-width: 1260px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 55px;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
   padding: 25px 0 45px;
 }
 .detail-image {
-  background: #f5f6f1;
+  background: #dda9da;
   border-radius: 9px;
   padding: 30px;
   display: grid;
   place-items: center;
 }
-.detail-image img {
+.detail img {
   width: 100%;
   max-height: 460px;
   object-fit: contain;
@@ -2185,7 +2186,7 @@ main > h1 {
 }
 .detail-image {
   border-radius: 0;
-  background: #eeebe5;
+  background: #f5dcf4;
 }
 .detail h1 {
   color: #242424;
@@ -2231,7 +2232,7 @@ main > h1 {
   color: #6e455e;
 }
 .breadcrumb {
-  color: #7f7469;
+  color: #9b0090;
 }
 @media (min-width: 1700px) {
   .interior-hero {

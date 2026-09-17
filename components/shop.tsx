@@ -1162,6 +1162,16 @@ export default function Shop({ path }: { path: string[] }) {
           ) : route === "products" && path[1] ? (
             (() => {
               const p = products.find((p) => p.id === path[1]);
+               if (!p) {
+    return (
+      <main className="empty">
+        <h1>Product not found</h1>
+        <a href="/products">Browse the collection</a>
+      </main>
+    );
+  }
+
+  const isSaved = wish.includes(p.id);
               return p ? (
                 <main>
                   <div className="breadcrumb">
@@ -1170,9 +1180,9 @@ export default function Shop({ path }: { path: string[] }) {
                     {p.name}
                   </div>
                   <div className="detail">
-                    <div className="detail-image">
+                  
                       <img src={p.image} alt={p.name} />
-                    </div>
+                 
                     <div>
                       <span className="eyebrow">
                         {p.brand} · {p.category}
@@ -1182,10 +1192,7 @@ export default function Shop({ path }: { path: string[] }) {
                       <div className="detail-price">
                         {money(p.price)} <del>{money(p.original)}</del>
                       </div>
-                      <p>
-                        {p.stock} available in sample catalogue · SKU:{" "}
-                        {p.id.toUpperCase()}
-                      </p>
+                     
                       <div className="quantity">
                         <button
                           aria-label="Decrease quantity"
@@ -1217,12 +1224,16 @@ export default function Shop({ path }: { path: string[] }) {
                         >
                           Add to cart <ShoppingBag size={17} />
                         </button>
-                        <button
-                          className="btn outline"
-                          onClick={() => wishlist(p)}
-                        >
-                          <Heart size={17} /> Save
-                        </button>
+                       <button
+  className={`btn outline ${isSaved ? "wishlist-saved" : ""}`}
+  onClick={() => wishlist(p)}
+>
+  <Heart
+  size={17}
+  className={isSaved ? "fill-[#9b0090] text-[#9b0090]" : ""}
+/>
+  {isSaved ? "Saved" : "Save"}
+</button>
                       </div>
                       <a
                         className="text-button"
