@@ -22,6 +22,7 @@ import {
   Headphones,
   Tag,
   ChevronRight,
+  ChevronLeft,
   Plus,
   Minus,
   Trash2,
@@ -2925,15 +2926,15 @@ export default function Shop({ path }: { path: string[] }) {
                 <>
                   <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                     <div className="border border-[#26231f]/10 bg-white p-5 sm:p-6">
-                      <small className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#958c81]">Products</small>
+                      <small className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#9b0090]">Products</small>
                       <h2 className="mt-2 font-serif text-[34px] text-[#26231f] sm:text-[40px]">{admin.products.length}</h2>
                     </div>
                     <div className="border border-[#26231f]/10 bg-white p-5 sm:p-6">
-                      <small className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#958c81]">Orders</small>
+                      <small className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#9b0090]">Orders</small>
                       <h2 className="mt-2 font-serif text-[34px] text-[#26231f] sm:text-[40px]">{admin.orders.length}</h2>
                     </div>
                     <div className="border border-[#26231f]/10 bg-white p-5 sm:p-6">
-                      <small className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#958c81]">Pending</small>
+                      <small className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#9b0090]">Pending</small>
                       <h2>
                         {
                           admin.orders.filter(
@@ -2942,9 +2943,9 @@ export default function Shop({ path }: { path: string[] }) {
                         }
                       </h2>
                     </div>
-                    <div className="border border-[#26231f]/10 bg-[#f4f0e9] p-5 sm:p-6">
-                      <small className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#958c81]">Sample order value</small>
-                      <h2>
+                    <div className="border border-[#26231f]/10 bg-[#dda9da]/20 p-5 sm:p-6">
+                      <small className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#9b0090]">Sample order value</small>
+                      <h2 className="font-bold!">
                         {money(
                           admin.orders.reduce(
                             (s: number, o: any) => s + o.total,
@@ -2955,13 +2956,12 @@ export default function Shop({ path }: { path: string[] }) {
                     </div>
                   </div>
                   <Tabs defaultValue={path[1] || "products"} className="mt-10 w-full sm:mt-12">
-                    <TabsList className="mb-7 flex h-auto w-full justify-start gap-0 overflow-x-auto rounded-none border-b border-[#26231f]/10 bg-transparent p-0">
+                    <TabsList className="mb-7 flex h-auto w-full justify-start gap-0  rounded-none border-b border-[#26231f]/10 bg-transparent p-0">
                       {[
                         "products",
                         "orders",
                         "customers",
-                        "categories",
-                        "brands",
+                     
                         "offers",
                         "reviews",
                         "enquiries",
@@ -2970,7 +2970,7 @@ export default function Shop({ path }: { path: string[] }) {
                         <TabsTrigger
                           value={v}
                           key={v}
-                          className="shrink-0 rounded-none border-b-2 border-transparent bg-transparent px-4 py-4 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#766e65] shadow-none data-[state=active]:border-[#9b0090] data-[state=active]:bg-transparent data-[state=active]:text-[#9b0090] data-[state=active]:shadow-none"
+                          className="shrink-0 rounded-none border-b-2 border-transparent bg-transparent px-4 py-4 text-[12px]! font-semibold! uppercase tracking-[0.01em] text-[#766e65] shadow-none  data-[state=active]:bg-[#dda9da]/20! data-[state=active]:text-[#9b0090] data-[state=active]:shadow-none!"
                         >
                           {v}
                         </TabsTrigger>
@@ -3766,33 +3766,740 @@ type CustomerReview = {
   published: boolean;
 };
 
-function CustomerReviewsSection({ reviews }: { reviews: CustomerReview[] }) {
-  const published = reviews.filter((review) => review.published === true &&
-    typeof review.name === "string" && review.name.trim() &&
-    typeof review.description === "string" && review.description.trim() &&
-    Number.isInteger(review.rating) && review.rating >= 1 && review.rating <= 5);
+function CustomerReviewsSection({
+  reviews,
+}: {
+  reviews: CustomerReview[];
+}) {
+  const published = reviews.filter(
+    (review) =>
+      review.published === true &&
+      typeof review.name === "string" &&
+      review.name.trim() &&
+      typeof review.description === "string" &&
+      review.description.trim() &&
+      Number.isInteger(review.rating) &&
+      review.rating >= 1 &&
+      review.rating <= 5
+  );
+
+  const [current, setCurrent] = useState(0);
+  const [slideDistance, setSlideDistance] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(4);
+  const [transitionEnabled, setTransitionEnabled] =
+    useState(true);
+
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  const noteStyles = [
+    {
+      bg: "bg-[#ffd95c]/15",
+      rotate: "-rotate-[2deg]",
+    },
+    {
+      bg: "bg-[#78e5a7]/15",
+      rotate: "rotate-[2deg]",
+    },
+    {
+      bg: "bg-[#95e7e4]/15",
+      rotate: "-rotate-[1deg]",
+    },
+    {
+      bg: "bg-[#000000]/10",
+      rotate: "rotate-[2deg]",
+    },
+    {
+      bg: "bg-[#dda9da]/15",
+      rotate: "rotate-[2deg]",
+    },
+  ];
+
+  /*
+   * Detect how many cards should be visible.
+   *
+   * Mobile  : 1
+   * Tablet  : 2
+   * Desktop : 4
+   */
+  useEffect(() => {
+    const updateVisibleCount = () => {
+      if (window.innerWidth >= 1280) {
+        setVisibleCount(4);
+      } else if (window.innerWidth >= 640) {
+        setVisibleCount(2);
+      } else {
+        setVisibleCount(1);
+      }
+    };
+
+    updateVisibleCount();
+
+    window.addEventListener(
+      "resize",
+      updateVisibleCount
+    );
+
+    return () => {
+      window.removeEventListener(
+        "resize",
+        updateVisibleCount
+      );
+    };
+  }, []);
+
+  /*
+   * Measure the ACTUAL sticky note width.
+   *
+   * This is more reliable than calculating it manually.
+   * It includes the real Tailwind gap as well.
+   */
+  useEffect(() => {
+    const calculateSlideDistance = () => {
+      const track = trackRef.current;
+
+      if (!track) return;
+
+      const firstCard =
+        track.firstElementChild as HTMLElement | null;
+
+      if (!firstCard) return;
+
+      const cardWidth =
+        firstCard.getBoundingClientRect().width;
+
+      const trackStyles =
+        window.getComputedStyle(track);
+
+      const gap =
+        parseFloat(trackStyles.columnGap) ||
+        parseFloat(trackStyles.gap) ||
+        0;
+
+      setSlideDistance(cardWidth + gap);
+    };
+
+    const frame = requestAnimationFrame(
+      calculateSlideDistance
+    );
+
+    window.addEventListener(
+      "resize",
+      calculateSlideDistance
+    );
+
+    const observer =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(calculateSlideDistance)
+        : null;
+
+    if (trackRef.current?.parentElement) {
+      observer?.observe(
+        trackRef.current.parentElement
+      );
+    }
+
+    return () => {
+      cancelAnimationFrame(frame);
+
+      window.removeEventListener(
+        "resize",
+        calculateSlideDistance
+      );
+
+      observer?.disconnect();
+    };
+  }, [published.length, visibleCount]);
+
+  /*
+   * Reset slider when review count changes.
+   */
+  useEffect(() => {
+    setTransitionEnabled(false);
+    setCurrent(0);
+
+    const frame = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTransitionEnabled(true);
+      });
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [published.length]);
+
+  /*
+   * AUTO SLIDE
+   *
+   * The complete sticky note moves every 4 seconds.
+   */
+  useEffect(() => {
+    if (published.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrent((previous) => previous + 1);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [published.length]);
+
+  /*
+   * Seamless infinite loop.
+   *
+   * Once we reach the duplicate set,
+   * silently jump back to the beginning.
+   */
+  useEffect(() => {
+    if (
+      published.length === 0 ||
+      current !== published.length
+    ) {
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setTransitionEnabled(false);
+      setCurrent(0);
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTransitionEnabled(true);
+        });
+      });
+    }, 700);
+
+    return () => clearTimeout(timeout);
+  }, [current, published.length]);
+
   if (!published.length) return null;
-  return <section aria-labelledby="customer-reviews-heading" className="bg-[#dda9da]/20 px-5 py-14 sm:px-10 sm:py-16 lg:px-16">
-    <div className="mx-auto max-w-[1500px]">
-      <div className="mb-9 text-center">
-        <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#9b0090]">Customer reviews</span>
-        <h2 id="customer-reviews-heading" className="mt-3 font-serif text-4xl leading-tight text-[#2f2a24] sm:text-5xl">Words from our customers.</h2>
-      </div>
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {published.map((review) => <figure key={review.id} className="m-0 flex min-w-0 flex-col border border-stone-200  bg-white p-6 sm:p-8">
-          <div role="img" aria-label={`${review.rating} out of 5 stars`} className="mb-5 flex gap-1 text-[#9b0090]">
-            {[1, 2, 3, 4, 5].map((star) => <svg key={star} aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"
-              fill={star <= review.rating ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5">
-              <path d="m12 3 2.78 5.63L21 9.54l-4.5 4.39 1.06 6.2L12 17.2l-5.56 2.93 1.06-6.2L3 9.54l6.22-.91L12 3Z" />
-            </svg>)}
+
+  /*
+   * Duplicate enough cards for an infinite carousel.
+   *
+   * Example:
+   *
+   * 1 2 3 4 | 1 2 3 4
+   *
+   * This allows:
+   *
+   * 1 2 3 4
+   * 2 3 4 1
+   * 3 4 1 2
+   * 4 1 2 3
+   */
+  const totalSliderCards =
+    published.length + visibleCount;
+
+  const sliderReviews = Array.from(
+    { length: totalSliderCards },
+    (_, index) =>
+      published[index % published.length]
+  );
+
+  const activeIndex =
+    current % published.length;
+
+  const nextReview = () => {
+    setCurrent((previous) => previous + 1);
+  };
+
+  const previousReview = () => {
+    /*
+     * Normal previous movement.
+     */
+    if (current > 0) {
+      setCurrent((previous) => previous - 1);
+      return;
+    }
+
+    /*
+     * At the beginning:
+     * silently jump to duplicate position,
+     * then animate one card backwards.
+     */
+    setTransitionEnabled(false);
+    setCurrent(published.length);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTransitionEnabled(true);
+
+        setCurrent(
+          Math.max(published.length - 1, 0)
+        );
+      });
+    });
+  };
+
+  const goToReview = (index: number) => {
+    setCurrent(index);
+  };
+
+  return (
+    <section
+      aria-labelledby="customer-reviews-heading"
+      className="
+        overflow-hidden
+        bg-white
+        px-5
+        py-16
+        sm:px-10
+        sm:py-20
+        lg:px-16
+        lg:py-[72px]
+      "
+    >
+      <div className="mx-auto max-w-[1500px]">
+
+        {/* ========================
+            HEADING
+        ========================= */}
+        <div
+          className="
+            mb-12
+            flex
+            flex-col
+            items-center
+            justify-between
+            gap-6
+            text-center
+
+            lg:flex-row
+            lg:text-left
+          "
+        >
+          <div>
+            <span
+              className="
+                text-[11px]
+                font-medium
+                uppercase
+                tracking-[0.2em]
+                text-stone-500
+                text-[#9b0090]!
+              "
+            >
+              Customer reviews
+            </span>
+
+            <h2
+              id="customer-reviews-heading"
+              className="
+                mt-3
+                font-serif
+                text-4xl
+                leading-tight
+                text-[#2f2a24]
+
+                sm:text-5xl
+              "
+            >
+              Words from our customers.
+            </h2>
           </div>
-          <blockquote className="m-0 flex-1 whitespace-pre-wrap break-words text-base leading-7 text-stone-600">{review.description}</blockquote>
-          <figcaption className="mt-7 flex items-center gap-3 border-t border-stone-100 pt-5">
-            <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-full bg-[#f6eff5] font-medium text-[#9b0090]">{review.name.trim().slice(0, 1).toUpperCase()}</span>
-            <span className="min-w-0 break-words text-sm font-medium text-stone-900">{review.name}</span>
-          </figcaption>
-        </figure>)}
+
+          {/* Navigation */}
+          {published.length > 1 && (
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={previousReview}
+                aria-label="Previous review"
+                className="
+                  grid
+                  size-11
+                  place-items-center
+
+                  rounded-full
+                  border
+                  border-stone-300
+
+                  bg-white
+                  text-[#2f2a24]
+
+                  transition
+                  duration-300
+
+                  hover:bg-[#2f2a24]
+                  hover:text-white
+                "
+              >
+                <ChevronLeft
+                  size={19}
+                  strokeWidth={1.7}
+                />
+              </button>
+
+              <button
+                type="button"
+                onClick={nextReview}
+                aria-label="Next review"
+                className="
+                  grid
+                  size-11
+                  place-items-center
+
+                  rounded-full
+                  border
+                  border-stone-300
+
+                  bg-white
+                  text-[#2f2a24]
+
+                  transition
+                  duration-300
+
+                  hover:bg-[#2f2a24]
+                  hover:text-white
+                "
+              >
+                <ChevronRight
+                  size={19}
+                  strokeWidth={1.7}
+                />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* ========================
+            SLIDER WINDOW
+        ========================= */}
+        <div className="overflow-hidden px-1 py-7">
+
+          {/* WHOLE MOVING TRACK */}
+          <div
+            ref={trackRef}
+            className={`
+              flex
+              gap-5
+
+              sm:gap-7
+
+              ${
+                transitionEnabled
+                  ? "transition-transform duration-700 ease-in-out"
+                  : "transition-none"
+              }
+            `}
+            style={{
+              transform: `translate3d(-${
+                current * slideDistance
+              }px, 0, 0)`,
+              willChange: "transform",
+            }}
+          >
+            {sliderReviews.map(
+              (review, index) => {
+                const style =
+                  noteStyles[
+                    index % noteStyles.length
+                  ];
+
+                return (
+                  <figure
+                    key={`${review.id}-${index}`}
+                    className={`
+                      ${style.bg}
+                      ${style.rotate}
+
+                      group
+                      relative
+                      m-0
+
+                      flex
+                      min-h-[310px]
+                      shrink-0
+                      flex-col
+                      justify-between
+
+                      overflow-hidden
+
+                      px-8
+                      pb-11
+                      pt-14
+
+                      text-[#28231d]
+
+                
+
+                      transition-[transform,box-shadow]
+                      duration-500
+                      ease-out
+                      rounded-br-[100px]
+                      transition-transform
+                      hover:z-20
+                      hover:rotate-0
+                      hover:-translate-y-2
+                      hover:shadow-[10px_20px_30px_rgba(0,0,0,0.16)]
+
+                      w-full
+
+                      sm:w-[calc((100%_-_28px)/2)]
+
+                      xl:w-[calc((100%_-_84px)/4)]
+                    `}
+                  >
+                    {/* ========================
+                        PAPER LIGHTING
+                    ========================= */}
+                    <div
+                      aria-hidden="true"
+                      className="
+                        pointer-events-none
+                        absolute
+                        inset-0
+
+                        bg-gradient-to-br
+                        from-white/15
+                        via-transparent
+                        to-black/[0.03]
+                      "
+                    />
+
+                    {/* ========================
+                        PUSH PIN
+                    ========================= */}
+                    {/* Push Pin Image */}
+<img
+  src="/images/pin.png"
+  alt=""
+  aria-hidden="true"
+  className="
+    pointer-events-none
+    absolute
+    left-5
+    top-[-0px]
+    z-30
+    scale-x-[-1]
+    w-[52px]
+    rotate-[18deg]
+    select-none
+    object-contain
+  "
+/>
+
+                    {/* ========================
+                        REVIEW
+                    ========================= */}
+                    <div className="relative z-10 pt-4">
+                      <blockquote
+                        className="
+                          m-0
+                          max-w-[95%]
+
+                          whitespace-pre-wrap
+                          break-words
+
+                          text-[15px]
+                          font-medium
+                          leading-[1.45]
+                          tracking-[-0.01em]
+
+                          text-[#28231d]
+                        "
+                      >
+                        {review.description}
+                      </blockquote>
+                    </div>
+
+                    {/* ========================
+                        CUSTOMER
+                    ========================= */}
+                    <figcaption
+                      className="
+                        relative
+                        z-20
+                        mt-10
+                        pr-16
+                      "
+                    >
+                      <div
+                        className="
+                          text-[13px]
+                          font-semibold
+                          text-[#28231d]
+                        "
+                      >
+                        {review.name}
+                      </div>
+
+                      <div
+                        className="
+                          mt-1
+                          text-[10px]
+                          text-[#28231d]/60
+                        "
+                      >
+                        Verified customer
+                      </div>
+                    </figcaption>
+
+                    {/* ========================
+                        CURLED CORNER SHADOW
+                    ========================= */}
+                    <div
+                      aria-hidden="true"
+                      className="
+                        pointer-events-none
+
+                        absolute
+                        bottom-[1px]
+                        right-[1px]
+                        z-[5]
+
+                        h-[85px]
+                        w-[95px]
+                      "
+                    >
+                      <div
+                        className="
+                          absolute
+                          bottom-[3px]
+                          right-[4px]
+
+                          h-[52px]
+                          w-[72px]
+
+                          rotate-[-8deg]
+
+                        "
+                      />
+                    </div>
+
+                    {/* ========================
+                        FOLDED PAPER
+                    ========================= */}
+                    <div
+                      aria-hidden="true"
+                      className="
+                        pointer-events-none
+
+                        absolute
+                        bottom-0
+                        right-0
+                        z-20
+
+                        h-[78px]
+                        w-[92px]
+
+                        overflow-hidden
+                      "
+                    >
+                      {/* folded flap */}
+                      <div
+                        className="
+                          absolute
+                          bottom-[-2px]
+                          right-[-1px]
+
+                          h-[75px]
+                          w-[88px]
+
+                          origin-bottom-right
+
+                       
+                        "
+                      >
+                        <div
+                          className="
+                            absolute
+                            inset-0
+
+                          
+                          "
+                        />
+                      </div>
+                    </div>
+
+                    {/* ========================
+                        CURVED PAPER CUT
+                    ========================= */}
+                    <div
+                      aria-hidden="true"
+                      className="
+                        pointer-events-none
+
+                        absolute
+                        bottom-[-60px]
+                        right-[-55px]
+                        z-30
+
+                        h-[120px]
+                        w-[120px]
+
+                   
+                      "
+                    />
+
+                    {/* Fold line */}
+                    <div
+                      aria-hidden="true"
+                      className="
+                        pointer-events-none
+
+                        absolute
+                        bottom-[48px]
+                        right-[5px]
+                        z-[31]
+
+                        h-px
+                        w-[56px]
+
+                        origin-right
+                        rotate-[40deg]
+
+                        
+                      "
+                    />
+                  </figure>
+                );
+              }
+            )}
+          </div>
+        </div>
+
+        {/* ========================
+            DOTS
+        ========================= */}
+        {published.length > 1 && (
+          <div
+            className="
+              mt-7
+              flex
+              items-center
+              justify-center
+              gap-2
+            "
+          >
+            {published.map(
+              (review, index) => (
+                <button
+                  key={`dot-${review.id}-${index}`}
+                  type="button"
+                  onClick={() =>
+                    goToReview(index)
+                  }
+                  aria-label={`Go to review ${
+                    index + 1
+                  }`}
+                  className={`
+                    h-2
+                    rounded-full
+
+                    transition-all
+                    duration-300
+
+                    ${
+                      activeIndex === index
+                        ? "w-7 bg-[#2f2a24]"
+                        : "w-2 bg-[#2f2a24]/20 hover:bg-[#2f2a24]/50"
+                    }
+                  `}
+                />
+              )
+            )}
+          </div>
+        )}
       </div>
-    </div>
-  </section>;
+    </section>
+  );
 }
