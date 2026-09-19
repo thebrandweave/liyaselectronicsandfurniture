@@ -7,12 +7,19 @@ export const metadata: Metadata = {
   title: "Liyas Electronics & Furniture | Thirthahalli",
   description:
     "Discover electronics, home appliances and furniture at Liyas, Sheshashayi Complex, Seebinakere, Sagara Road, Thirthahalli.",
+
   other: {
     "codex-preview": "development",
   },
+
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
 };
 
