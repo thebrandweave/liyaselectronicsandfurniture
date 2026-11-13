@@ -2,7 +2,22 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight,Heart } from "lucide-react";
 // import { useState } from "react";
-import { ArrowUpRight, Plus, MapPin, Truck, ShieldCheck, Headphones } from "lucide-react";
+import {
+  ArrowUpRight,
+  Plus,
+  MapPin,
+  Truck,
+  ShieldCheck,
+  Headphones,
+  Bot,
+  Sparkles,
+  X,
+  Send,
+  RotateCcw,
+  MessageSquare,
+  Check,
+  Store,
+} from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -1231,6 +1246,450 @@ export default function ShowroomHome({
     </div>
   </div>
 </section>
+
+      {/* AUTOMATED AI CHATBOT ASSISTANT */}
+      <ShowroomAIChatbot />
     </div>
+  );
+}
+
+type ChatMessage = {
+  id: string;
+  sender: "bot" | "user";
+  text: string;
+  link?: { text: string; url: string };
+  time: string;
+};
+
+const SUGGESTED_QUERIES = [
+  { label: "🛋️ How to choose sofa size?", query: "How do I choose the right sofa size for my living room?" },
+  { label: "🪵 Teak vs Sheesham wood?", query: "What is the difference between Teak and Sheesham wood?" },
+  { label: "📺 What TV size is best?", query: "What TV screen size is best for my viewing distance?" },
+  { label: "❄️ Refrigerator capacity guide?", query: "What refrigerator capacity do I need for my family?" },
+  { label: "🛏️ Bed size: King vs Queen?", query: "Should I buy a King or Queen size bed?" },
+  { label: "🧺 Front load vs Top load?", query: "What is better: Front load or Top load washing machine?" },
+  { label: "🚚 Delivery & Assembly?", query: "Do you deliver and assemble in Thirthahalli, Koppa, and AP?" },
+  { label: "📍 Where are your showrooms?", query: "Where are your store locations and showrooms?" },
+];
+
+function getChatbotResponse(query: string): { text: string; link?: { text: string; url: string } } {
+  const q = query.toLowerCase();
+
+  if (q.includes("sofa") || q.includes("couch") || q.includes("living") || q.includes("seating")) {
+    return {
+      text: "🛋️ **Sofa Sizing:** Leave 18\" from your coffee table and 30\" for walkways. 3-seaters fit rooms under 150 sq ft; L-shapes suit open halls. All built with 32–40 HD foam.",
+      link: { text: "View Sofas", url: "/products?category=Sofas" },
+    };
+  }
+
+  if (q.includes("teak") || q.includes("sheesham") || q.includes("wood") || q.includes("timber") || q.includes("material")) {
+    return {
+      text: "🪵 **Teak vs Sheesham:** Teak has natural oils that resist rain, humidity & termites (ideal for Malnad). Sheesham offers dense structural strength & dark grains. Both have a 5-yr warranty.",
+      link: { text: "View Solid Wood", url: "/furniture" },
+    };
+  }
+
+  if (q.includes("tv") || q.includes("television") || q.includes("screen") || q.includes("oled") || q.includes("4k") || q.includes("display")) {
+    return {
+      text: "📺 **TV Distance Formula:**\n• 6–8 ft: 43\"–50\" 4K TV\n• 8–10 ft: 55\" 4K TV (Most popular)\n• 10–14 ft+: 65\"+ 4K/OLED\nIncludes free wall-mounting & setup.",
+      link: { text: "View Smart TVs", url: "/electronics" },
+    };
+  }
+
+  if (q.includes("fridge") || q.includes("refrigerator") || q.includes("cooling") || q.includes("double door") || q.includes("freezer")) {
+    return {
+      text: "❄️ **Fridge Capacity:**\n• 1–2 people: 190L–215L\n• 3–4 people: 240L–340L Double Door\n• 5+ people: 400L+ Side-by-Side\nDigital Inverter models save up to 40% power.",
+      link: { text: "View Refrigerators", url: "/products?category=Refrigerators" },
+    };
+  }
+
+  if (q.includes("bed") || q.includes("bedroom") || q.includes("mattress") || q.includes("sleep")) {
+    return {
+      text: "🛏️ **Bed Sizes:** Queen (60\"x78\") fits 10x10 ft rooms; King (72\"x78\") needs 11x12 ft+. Hydraulic lift-storage & orthopedic mattresses available.",
+      link: { text: "View Beds", url: "/products?category=Beds" },
+    };
+  }
+
+  if (q.includes("dining") || q.includes("table") || q.includes("chair")) {
+    return {
+      text: "🍽️ **Dining Tables:** 4-seater (3x4 ft) for daily compact meals; 6-seater (3x5.5 ft) for family gatherings. Crafted in solid teak with cushioned chairs.",
+      link: { text: "View Dining Sets", url: "/products?category=Dining%20Tables" },
+    };
+  }
+
+  if (q.includes("wash") || q.includes("laundry") || q.includes("machine") || q.includes("dryer")) {
+    return {
+      text: "🧺 **Washers:** Front-load gives the best wash & saves 45% water. Top-load is budget-friendly & easy to load. 7–8 kg suits a family of 4.",
+      link: { text: "View Appliances", url: "/electronics" },
+    };
+  }
+
+  if (q.includes("ac") || q.includes("air condition") || q.includes("ton")) {
+    return {
+      text: "💨 **AC Sizing:** 1.0 Ton up to 120 sq ft; 1.5 Ton for 120–180 sq ft; 2.0 Ton for large halls. 5-Star Inverters offer maximum bill savings.",
+      link: { text: "View Appliances", url: "/electronics" },
+    };
+  }
+
+  if (q.includes("deliver") || q.includes("assembl") || q.includes("ship") || q.includes("install")) {
+    return {
+      text: "🚚 **Delivery & Setup:** Free doorstep delivery in Thirthahalli & Koppa, plus safe regional transit to Andhra Pradesh. Free on-site assembly included.",
+      link: { text: "Contact Team", url: "/contact" },
+    };
+  }
+
+  if (q.includes("location") || q.includes("store") || q.includes("outlet") || q.includes("where") || q.includes("thirthahalli") || q.includes("koppa") || q.includes("andhra") || q.includes("address")) {
+    return {
+      text: "📍 **Showrooms:** Open daily in Thirthahalli (Sagara Rd), Koppa (Market Rd), and Andhra Pradesh regional hub. Walk-ins welcome!",
+      link: { text: "Get Directions", url: "/contact" },
+    };
+  }
+
+  if (q.includes("offer") || q.includes("discount") || q.includes("price") || q.includes("warranty") || q.includes("sale") || q.includes("emi")) {
+    return {
+      text: "✨ **Warranty & Deals:** 100% brand warranty on electronics, 5-yr warranty on solid wood, and combo discounts with 0% EMI.",
+      link: { text: "View Offers", url: "/offers" },
+    };
+  }
+
+  return {
+    text: "✨ We carry solid wood furniture and top-brand home electronics. What product or room are you planning for?",
+    link: { text: "Browse Products", url: "/products" },
+  };
+}
+
+function ShowroomAIChatbot() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [showBubble, setShowBubble] = useState(false);
+  const [bubbleMessage, setBubbleMessage] = useState(
+    "👋 Need quick advice on sofa sizing, TV distance, or appliances?"
+  );
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: "welcome-1",
+      sender: "bot",
+      text: "Hi! 👋 Welcome to Liya’s. Ask me anything about furniture dimensions, wood types, appliances, or delivery in Thirthahalli & Koppa.",
+      time: "Just now",
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Automatically pop up notification bubble after 3.2 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!isOpen && !hasInteracted) {
+        setShowBubble(true);
+      }
+    }, 3200);
+
+    // Alternate bubble tip after 11 seconds
+    const tipTimer = setTimeout(() => {
+      if (!isOpen && !hasInteracted) {
+        setBubbleMessage(
+          "💡 Tip: Ask about sofa sizes, TV distance, or Teak vs Sheesham wood."
+        );
+      }
+    }, 11000);
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(tipTimer);
+    };
+  }, [isOpen, hasInteracted]);
+
+  // Scroll to bottom on new messages
+  useEffect(() => {
+    if (isOpen) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isTyping, isOpen]);
+
+  const handleOpen = () => {
+    setIsOpen(true);
+    setShowBubble(false);
+    setHasInteracted(true);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
+  const handleSendMessage = (textToSend?: string) => {
+    const userQuery = (textToSend || input).trim();
+    if (!userQuery) return;
+
+    setHasInteracted(true);
+    setShowBubble(false);
+    if (!isOpen) setIsOpen(true);
+
+    const userMsg: ChatMessage = {
+      id: "user-" + Date.now(),
+      sender: "user",
+      text: userQuery,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+
+    setMessages((prev) => [...prev, userMsg]);
+    setInput("");
+    setIsTyping(true);
+
+    // Simulate AI thinking & typing
+    setTimeout(() => {
+      const response = getChatbotResponse(userQuery);
+      const botMsg: ChatMessage = {
+        id: "bot-" + Date.now(),
+        sender: "bot",
+        text: response.text,
+        link: response.link,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setMessages((prev) => [...prev, botMsg]);
+      setIsTyping(false);
+    }, 650);
+  };
+
+  const handleReset = () => {
+    setMessages([
+      {
+        id: "welcome-reset",
+        sender: "bot",
+        text: "Conversation reset! 👋 What can I help you discover about Liya's furniture or electronics?",
+        time: "Just now",
+      },
+    ]);
+  };
+
+  return (
+    <>
+      {/* 1. AUTOMATIC PROACTIVE PREVIEW BUBBLE */}
+      {showBubble && !isOpen && (
+        <div className="fixed bottom-24 right-5 z-50 max-w-[340px] animate-in fade-in slide-in-from-bottom-3 duration-500 sm:right-7">
+          <div className="relative rounded-2xl border border-[#9b0090]/25 bg-white p-4 shadow-xl backdrop-blur-md">
+            <button
+              type="button"
+              onClick={() => setShowBubble(false)}
+              aria-label="Dismiss message"
+              className="absolute right-2.5 top-2.5 flex h-6 w-6 items-center justify-center rounded-full text-stone-400 hover:bg-stone-100 hover:text-stone-700"
+            >
+              <X size={14} />
+            </button>
+
+            <div className="flex items-start gap-3">
+              <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#9b0090] to-[#b300a6] text-white shadow-sm">
+                <Bot size={20} />
+                <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500" />
+                </span>
+              </div>
+
+              <div className="flex-1 pr-3">
+                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#9b0090]">
+                  <Sparkles size={12} /> Liya’s AI Assistant
+                </div>
+                <p className="mt-1 text-[13px] leading-relaxed text-[#26231f]">
+                  {bubbleMessage}
+                </p>
+              </div>
+            </div>
+
+            {/* Quick action chips inside bubble */}
+            <div className="mt-3 flex flex-wrap gap-1.5 border-t border-stone-100 pt-2.5">
+              <button
+                type="button"
+                onClick={() => handleSendMessage("How do I choose the right sofa size for my living room?")}
+                className="rounded-full border border-[#9b0090]/20 bg-[#9b0090]/5 px-2.5 py-1 text-[11px] font-medium text-[#9b0090] transition hover:bg-[#9b0090] hover:text-white"
+              >
+                🛋️ Sofa Sizing
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSendMessage("What TV screen size is best for my viewing distance?")}
+                className="rounded-full border border-[#9b0090]/20 bg-[#9b0090]/5 px-2.5 py-1 text-[11px] font-medium text-[#9b0090] transition hover:bg-[#9b0090] hover:text-white"
+              >
+                📺 TV Size
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSendMessage("What is the difference between Teak and Sheesham wood?")}
+                className="rounded-full border border-[#9b0090]/20 bg-[#9b0090]/5 px-2.5 py-1 text-[11px] font-medium text-[#9b0090] transition hover:bg-[#9b0090] hover:text-white"
+              >
+                🪵 Teak vs Sheesham
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. MAIN FLOATING LAUNCHER BUTTON */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <button
+          type="button"
+          onClick={() => (isOpen ? handleClose() : handleOpen())}
+          aria-label={isOpen ? "Close AI Assistant" : "Open Liya's AI Assistant"}
+          className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-[#9b0090] via-[#85007c] to-[#a30097] text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-95"
+        >
+          {isOpen ? (
+            <X size={24} className="transition-transform group-hover:rotate-90 duration-300" />
+          ) : (
+            <>
+              <Bot size={26} className="transition-transform group-hover:scale-110 duration-200" />
+              {/* Unread automated notification beacon */}
+              <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-bold text-white">
+                  1
+                </span>
+              </span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* 3. FULL CHATBOT MODAL / WINDOW */}
+      {isOpen && (
+        <div className="fixed bottom-22 right-4 z-50 flex max-h-[88vh] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-[#26231f]/15 bg-white shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-300 sm:bottom-24 sm:right-6 sm:w-[420px] sm:max-h-[620px]">
+          {/* Header */}
+          <div className="flex items-center justify-between bg-[#eac2e7] px-4 py-3.5 text-gray-900 ">
+            <div className="flex items-center gap-3">
+              <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+                <Bot size={22} className="text-white" />
+                <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                </span>
+              </div>
+              <div>
+                <h3 className="flex items-center gap-1.5 text-[15px] font-semibold leading-tight text-white">
+                  Liya’s AI Assistant
+                  <Sparkles size={14} className="text-[#dda9da]" />
+                </h3>
+                <p className="text-[11px] text-white/80">
+                  Online • Furniture &amp; Electronics Expert
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1 text-white/90">
+              <button
+                type="button"
+                onClick={handleReset}
+                title="Restart chat"
+                className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-white/15"
+              >
+                <RotateCcw size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={handleClose}
+                aria-label="Close chat"
+                className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-white/15"
+              >
+                <X size={19} />
+              </button>
+            </div>
+          </div>
+
+          {/* Messages Area */}
+          <div className="flex-1 overflow-y-auto bg-[#faf8f5] p-4 space-y-3.5">
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`flex flex-col ${msg.sender === "user" ? "items-end" : "items-start"}`}
+              >
+                <div
+                  className={`max-w-[86%] rounded-2xl px-4 py-3 text-[13.5px] leading-relaxed shadow-xs ${
+                    msg.sender === "user"
+                      ? "rounded-br-xs bg-[#eac2e7] text-white"
+                      : "rounded-bl-xs border border-[#26231f]/10 bg-white text-[#26231f]"
+                  }`}
+                >
+                  <p className="whitespace-pre-line">{msg.text}</p>
+
+                  {/* Optional Action Button */}
+                  {msg.link && (
+                    <div className="mt-3 border-t border-stone-100 pt-2.5">
+                      <a
+                        href={msg.link.url}
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-[#9b0090]/10 px-3 py-1.5 text-[12px] font-semibold text-[#9b0090] transition hover:bg-[#9b0090] hover:text-white"
+                      >
+                        {msg.link.text} <ArrowUpRight size={14} />
+                      </a>
+                    </div>
+                  )}
+                </div>
+
+                <span className="mt-1 px-1 text-[10px] text-stone-400">
+                  {msg.time}
+                </span>
+              </div>
+            ))}
+
+            {/* AI Typing Indicator */}
+            {isTyping && (
+              <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-xs border border-[#26231f]/10 bg-white px-4 py-3 w-fit shadow-xs">
+                <span className="h-2 w-2 rounded-full bg-[#9b0090] animate-bounce [animation-delay:0ms]" />
+                <span className="h-2 w-2 rounded-full bg-[#9b0090] animate-bounce [animation-delay:150ms]" />
+                <span className="h-2 w-2 rounded-full bg-[#9b0090] animate-bounce [animation-delay:300ms]" />
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Quick Suggested Queries Slider / Drawer */}
+          <div className="border-t border-[#26231f]/10 bg-white px-3 py-2">
+            <span className="block text-[10px] font-semibold uppercase tracking-wider text-stone-400 mb-1.5">
+              Popular Questions:
+            </span>
+            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+              {SUGGESTED_QUERIES.map((q) => (
+                <button
+                  key={q.label}
+                  type="button"
+                  onClick={() => handleSendMessage(q.query)}
+                  className="shrink-0 rounded-full border border-stone-200 bg-[#faf8f5] px-3 py-1 text-[11px] font-medium text-stone-700 transition hover:border-[#9b0090] hover:bg-[#9b0090]/10 hover:text-[#9b0090]"
+                >
+                  {q.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Message Input Box */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSendMessage();
+            }}
+            className="flex items-center gap-2 border-t border-[#26231f]/10 bg-white p-3"
+          >
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask about sofa size, TV, wood, fridge..."
+              className="flex-1 rounded-xl border border-stone-200 bg-stone-50 px-3.5 py-2.5 text-[13.5px] text-[#26231f] placeholder:text-stone-400 focus:border-[#9b0090] focus:bg-white focus:outline-hidden"
+            />
+            <button
+              type="submit"
+              disabled={!input.trim() || isTyping}
+              aria-label="Send question"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#9b0090] text-white transition hover:bg-[#85007c] disabled:opacity-40 disabled:hover:bg-[#9b0090]"
+            >
+              <Send size={16} />
+            </button>
+          </form>
+
+          {/* Footer note */}
+          <div className="bg-stone-50 py-1.5 text-center text-[10px] text-stone-400 border-t border-stone-100">
+            Powered by Liya’s Smart Home Assistant • Karnataka &amp; Andhra Pradesh
+          </div>
+        </div>
+      )}
+    </>
   );
 }
