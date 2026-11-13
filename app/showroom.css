@@ -79,10 +79,11 @@ main > h1,
 .detail h1 {
   font-family: "Cormorant", Georgia, serif;
 }
-.showroom-home p {
+/* .showroom-home p {
   font-size: 15px;
   line-height: 1.7;
-}
+  color:rgb(237, 175, 246);
+} */
 .showroom-hero {
   width: 100%;
   position: relative;

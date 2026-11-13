@@ -1358,6 +1358,29 @@ function getChatbotResponse(query: string): { text: string; link?: { text: strin
   };
 }
 
+function renderMessageContent(text: string, isUser: boolean) {
+  return text.split("\n").map((line, lIdx) => {
+    const parts = line.split(/(\*\*.*?\*\*)/g);
+    return (
+      <span key={lIdx} className="block min-h-[1.3em]">
+        {parts.map((part, pIdx) => {
+          if (part.startsWith("**") && part.endsWith("**")) {
+            return (
+              <strong
+                key={pIdx}
+                className={`font-semibold ${isUser ? "text-white" : "text-stone-900"}`}
+              >
+                {part.slice(2, -2)}
+              </strong>
+            );
+          }
+          return <span key={pIdx}>{part}</span>;
+        })}
+      </span>
+    );
+  });
+}
+
 function ShowroomAIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [showBubble, setShowBubble] = useState(false);
@@ -1464,40 +1487,49 @@ function ShowroomAIChatbot() {
 
   return (
     <>
+      {/* MOBILE BACKDROP OVERLAY */}
+      {isOpen && (
+        <div
+          onClick={handleClose}
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs transition-opacity sm:hidden"
+          aria-hidden="true"
+        />
+      )}
+
       {/* 1. AUTOMATIC PROACTIVE PREVIEW BUBBLE */}
       {showBubble && !isOpen && (
-        <div className="fixed bottom-24 right-5 z-50 max-w-[340px] animate-in fade-in slide-in-from-bottom-3 duration-500 sm:right-7">
-          <div className="relative rounded-2xl border border-[#9b0090]/25 bg-white p-4 shadow-xl backdrop-blur-md">
+        <div className="fixed bottom-22 left-3 right-3 z-50 mx-auto max-w-[360px] animate-in fade-in slide-in-from-bottom-3 duration-500 sm:bottom-24 sm:left-auto sm:right-6 sm:mx-0 sm:max-w-[340px]">
+          <div className="relative rounded-2xl border border-[#9b0090]/25 bg-white p-3.5 shadow-xl backdrop-blur-md sm:p-4">
             <button
               type="button"
               onClick={() => setShowBubble(false)}
               aria-label="Dismiss message"
-              className="absolute right-2.5 top-2.5 flex h-6 w-6 items-center justify-center rounded-full text-stone-400 hover:bg-stone-100 hover:text-stone-700"
+              className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full text-stone-400 transition hover:bg-stone-100 hover:text-stone-700"
             >
-              <X size={14} />
+              <X size={15} />
             </button>
 
             <div className="flex items-start gap-3">
-              <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#9b0090] to-[#b300a6] text-white shadow-sm">
-                <Bot size={20} />
-                <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
+              <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#9b0090] to-[#b300a6] text-white shadow-xs sm:h-10 sm:w-10">
+                <Bot size={19} />
+                <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
                 </span>
               </div>
 
               <div className="flex-1 pr-3">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#9b0090]">
+                <div className="flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-wider text-[#9b0090] sm:text-[11px]">
                   <Sparkles size={12} /> Liya’s AI Assistant
                 </div>
-                <p className="mt-1 text-[13px] leading-relaxed text-[#26231f]">
+                <p className="mt-1 text-[12.5px] leading-relaxed text-[#26231f] sm:text-[13px]">
                   {bubbleMessage}
                 </p>
               </div>
             </div>
 
             {/* Quick action chips inside bubble */}
-            <div className="mt-3 flex flex-wrap gap-1.5 border-t border-stone-100 pt-2.5">
+            <div className="mt-2.5 flex flex-wrap gap-1.5 border-t border-stone-100 pt-2.5">
               <button
                 type="button"
                 onClick={() => handleSendMessage("How do I choose the right sofa size for my living room?")}
@@ -1525,18 +1557,18 @@ function ShowroomAIChatbot() {
       )}
 
       {/* 2. MAIN FLOATING LAUNCHER BUTTON */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6">
         <button
           type="button"
           onClick={() => (isOpen ? handleClose() : handleOpen())}
           aria-label={isOpen ? "Close AI Assistant" : "Open Liya's AI Assistant"}
-          className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-[#9b0090] via-[#85007c] to-[#a30097] text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-95"
+          className="group relative flex h-13 w-13 items-center justify-center rounded-full bg-gradient-to-tr from-[#9b0090] via-[#85007c] to-[#a30097] text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-95 sm:h-14 sm:w-14"
         >
           {isOpen ? (
-            <X size={24} className="transition-transform group-hover:rotate-90 duration-300" />
+            <X size={22} className="transition-transform group-hover:rotate-90 duration-300 sm:size-6" />
           ) : (
             <>
-              <Bot size={26} className="transition-transform group-hover:scale-110 duration-200" />
+              <Bot size={24} className="transition-transform group-hover:scale-110 duration-200 sm:size-7" />
               {/* Unread automated notification beacon */}
               <span className="absolute -top-1 -right-1 flex h-4 w-4">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -1549,25 +1581,30 @@ function ShowroomAIChatbot() {
         </button>
       </div>
 
-      {/* 3. FULL CHATBOT MODAL / WINDOW */}
+      {/* 3. RESPONSIVE CHATBOT DRAWER / POPUP */}
       {isOpen && (
-        <div className="fixed bottom-22 right-4 z-50 flex max-h-[88vh] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-[#26231f]/15 bg-white shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-300 sm:bottom-24 sm:right-6 sm:w-[420px] sm:max-h-[620px]">
+        <div className="fixed inset-x-0 bottom-0 z-50 flex h-[85dvh] max-h-[85dvh] w-full flex-col overflow-hidden rounded-t-3xl border-t border-[#26231f]/15 bg-white shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-300 sm:inset-x-auto sm:bottom-24 sm:right-6 sm:h-[620px] sm:max-h-[85vh] sm:w-[420px] sm:rounded-2xl sm:border">
+          {/* Mobile Handle Pill */}
+          <div className="flex justify-center bg-gradient-to-r from-[#9b0090] via-[#85007c] to-[#6d0066] pt-2 sm:hidden">
+            <div className="h-1 w-10 rounded-full bg-white/35" />
+          </div>
+
           {/* Header */}
-          <div className="flex items-center justify-between bg-[#eac2e7] px-4 py-3.5 text-gray-900 ">
-            <div className="flex items-center gap-3">
-              <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
-                <Bot size={22} className="text-white" />
+          <div className="flex items-center justify-between bg-gradient-to-r from-[#9b0090] via-[#85007c] to-[#6d0066] px-4 py-3 text-white sm:py-3.5">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm sm:h-10 sm:w-10">
+                <Bot size={20} className="text-white sm:size-[22px]" />
                 <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75" />
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
                 </span>
               </div>
               <div>
-                <h3 className="flex items-center gap-1.5 text-[15px] font-semibold leading-tight text-white">
-                  Liya’s AI Assistant
-                  <Sparkles size={14} className="text-[#dda9da]" />
+                <h3 className="flex items-center gap-1.5 text-[14px] font-semibold leading-tight text-white sm:text-[15px]">
+                  Our AI Assistant
+                  <Sparkles size={13} className="text-[#dda9da]" />
                 </h3>
-                <p className="text-[11px] text-white/80">
+                <p className="text-[10.5px] !text-white  sm:text-[11px]">
                   Online • Furniture &amp; Electronics Expert
                 </p>
               </div>
@@ -1578,51 +1615,59 @@ function ShowroomAIChatbot() {
                 type="button"
                 onClick={handleReset}
                 title="Restart chat"
-                className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-white/15"
+                className="flex h-8 w-8 items-center justify-center rounded-lg transition hover:bg-white/15 active:scale-95"
               >
-                <RotateCcw size={16} />
+                <RotateCcw size={15} />
               </button>
               <button
                 type="button"
                 onClick={handleClose}
                 aria-label="Close chat"
-                className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-white/15"
+                className="flex h-8 w-8 items-center justify-center rounded-lg transition hover:bg-white/15 active:scale-95"
               >
-                <X size={19} />
+                <X size={18} />
               </button>
             </div>
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto bg-[#faf8f5] p-4 space-y-3.5">
+          <div className="flex-1 overflow-y-auto bg-[#faf8f5] p-3.5 space-y-3 sm:p-4 sm:space-y-3.5">
             {messages.map((msg) => (
               <div
                 key={msg.id}
                 className={`flex flex-col ${msg.sender === "user" ? "items-end" : "items-start"}`}
               >
                 <div
-                  className={`max-w-[86%] rounded-2xl px-4 py-3 text-[13.5px] leading-relaxed shadow-xs ${
+                  className={`max-w-[88%] sm:max-w-[84%] rounded-2xl px-3.5 py-2.5 text-[13px] sm:px-4 sm:py-3 sm:text-[13.5px] leading-relaxed ${
                     msg.sender === "user"
-                      ? "rounded-br-xs bg-[#eac2e7] text-white"
-                      : "rounded-bl-xs border border-[#26231f]/10 bg-white text-[#26231f]"
+                      ? "rounded-br-xs bg-[#9b0090] text-white shadow-sm"
+                      : "rounded-bl-xs border border-stone-200/90 bg-white text-[#221f1d] shadow-xs"
                   }`}
                 >
-                  <p className="whitespace-pre-line">{msg.text}</p>
+                  <div
+                    className={
+                      msg.sender === "user"
+                        ? "text-white font-normal leading-relaxed"
+                        : "text-[#2b2723] font-normal leading-relaxed"
+                    }
+                  >
+                    {renderMessageContent(msg.text, msg.sender === "user")}
+                  </div>
 
                   {/* Optional Action Button */}
                   {msg.link && (
-                    <div className="mt-3 border-t border-stone-100 pt-2.5">
+                    <div className="mt-2.5 border-t border-stone-100 pt-2 sm:mt-3 sm:pt-2.5">
                       <a
                         href={msg.link.url}
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-[#9b0090]/10 px-3 py-1.5 text-[12px] font-semibold text-[#9b0090] transition hover:bg-[#9b0090] hover:text-white"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-[#9b0090]/20 bg-[#9b0090]/10 px-3 py-1.5 text-[11.5px] sm:text-[12px] font-semibold text-[#9b0090] transition hover:bg-[#9b0090] hover:text-white"
                       >
-                        {msg.link.text} <ArrowUpRight size={14} />
+                        {msg.link.text} <ArrowUpRight size={13} />
                       </a>
                     </div>
                   )}
                 </div>
 
-                <span className="mt-1 px-1 text-[10px] text-stone-400">
+                <span className="mt-1 px-1 text-[9.5px] sm:text-[10px] text-stone-400">
                   {msg.time}
                 </span>
               </div>
@@ -1630,7 +1675,7 @@ function ShowroomAIChatbot() {
 
             {/* AI Typing Indicator */}
             {isTyping && (
-              <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-xs border border-[#26231f]/10 bg-white px-4 py-3 w-fit shadow-xs">
+              <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-xs border border-[#26231f]/10 bg-white px-3.5 py-2.5 sm:px-4 sm:py-3 w-fit shadow-xs">
                 <span className="h-2 w-2 rounded-full bg-[#9b0090] animate-bounce [animation-delay:0ms]" />
                 <span className="h-2 w-2 rounded-full bg-[#9b0090] animate-bounce [animation-delay:150ms]" />
                 <span className="h-2 w-2 rounded-full bg-[#9b0090] animate-bounce [animation-delay:300ms]" />
@@ -1641,17 +1686,17 @@ function ShowroomAIChatbot() {
           </div>
 
           {/* Quick Suggested Queries Slider / Drawer */}
-          <div className="border-t border-[#26231f]/10 bg-white px-3 py-2">
-            <span className="block text-[10px] font-semibold uppercase tracking-wider text-stone-400 mb-1.5">
+          <div className="border-t border-[#26231f]/10 bg-white px-3 py-2 sm:px-3.5">
+            <span className="block text-[9.5px] font-semibold uppercase tracking-wider text-stone-400 mb-1.5 sm:text-[10px]">
               Popular Questions:
             </span>
-            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none touch-pan-x">
               {SUGGESTED_QUERIES.map((q) => (
                 <button
                   key={q.label}
                   type="button"
                   onClick={() => handleSendMessage(q.query)}
-                  className="shrink-0 rounded-full border border-stone-200 bg-[#faf8f5] px-3 py-1 text-[11px] font-medium text-stone-700 transition hover:border-[#9b0090] hover:bg-[#9b0090]/10 hover:text-[#9b0090]"
+                  className="shrink-0 rounded-full border border-stone-200 bg-[#faf8f5] px-3 py-1.5 text-[11px] font-medium text-stone-700 transition hover:border-[#9b0090] hover:bg-[#9b0090]/10 hover:text-[#9b0090] active:scale-95"
                 >
                   {q.label}
                 </button>
@@ -1659,33 +1704,33 @@ function ShowroomAIChatbot() {
             </div>
           </div>
 
-          {/* Message Input Box */}
+          {/* Message Input Box with iOS safe-area support */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleSendMessage();
             }}
-            className="flex items-center gap-2 border-t border-[#26231f]/10 bg-white p-3"
+            className="flex items-center gap-2 border-t border-[#26231f]/10 bg-white p-2.5 sm:p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
           >
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about sofa size, TV, wood, fridge..."
-              className="flex-1 rounded-xl border border-stone-200 bg-stone-50 px-3.5 py-2.5 text-[13.5px] text-[#26231f] placeholder:text-stone-400 focus:border-[#9b0090] focus:bg-white focus:outline-hidden"
+              className="flex-1 rounded-xl border border-stone-200 bg-stone-50 px-3.5 py-2.5 text-[16px] sm:text-[13.5px] text-[#26231f] placeholder:text-stone-400 focus:border-[#9b0090] focus:bg-white focus:outline-hidden"
             />
             <button
               type="submit"
               disabled={!input.trim() || isTyping}
               aria-label="Send question"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#9b0090] text-white transition hover:bg-[#85007c] disabled:opacity-40 disabled:hover:bg-[#9b0090]"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#9b0090] text-white transition hover:bg-[#85007c] active:scale-95 disabled:opacity-40 disabled:hover:bg-[#9b0090] sm:h-10 sm:w-10"
             >
               <Send size={16} />
             </button>
           </form>
 
           {/* Footer note */}
-          <div className="bg-stone-50 py-1.5 text-center text-[10px] text-stone-400 border-t border-stone-100">
+          <div className="hidden bg-stone-50 py-1 text-center text-[9.5px] text-stone-400 border-t border-stone-100 sm:block sm:text-[10px] sm:py-1.5">
             Powered by Liya’s Smart Home Assistant • Karnataka &amp; Andhra Pradesh
           </div>
         </div>

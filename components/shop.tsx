@@ -39,8 +39,12 @@ import {
   Monitor,
   Check,
   MessageCircle,
-    LogOut,
+  LogOut,
   ArrowUpRight,
+  Compass,
+  Target,
+  Store,
+  Sparkles,
 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
@@ -2636,32 +2640,275 @@ export default function Shop({ path }: { path: string[] }) {
   </section>
 
 
-  {/* INTRO STATEMENT */}
-  <section className="border-y border-[#26231f]/10">
-    <div className="mx-auto max-w-[1500px] px-4 py-12 sm:px-8 sm:py-14 md:px-10 lg:px-16 lg:py-16 ">
+  {/* INTRO STATEMENT / WHO WE ARE, VISION, MISSION & OUTLETS */}
+  <section className="border-y border-[#26231f]/10 bg-[#fdfcfb]">
+    <div className="mx-auto max-w-[1500px] px-4 py-14 sm:px-8 sm:py-20 md:px-10 lg:px-16 lg:py-24">
 
-      <div className="grid gap-6 sm:gap-8 lg:grid-cols-[0.6fr_1.4fr] lg:gap-10">
-
+      {/* 1. HERO STATEMENT */}
+      <div className="grid gap-8 sm:gap-10 lg:grid-cols-[0.55fr_1.45fr] lg:gap-14">
         <div>
-          <span className="text-[40px] font-semibold uppercase tracking-[0.08em] text-[#9b0090] sm:text-[56px] md:text-[80px] lg:text-[131px] lg:tracking-[0.1em]">
+          <span className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.3em] text-[#9b0090]">
+            Since Our Inception
+          </span>
+          <span className="block text-[44px] font-semibold uppercase tracking-[0.06em] text-[#9b0090] sm:text-[64px] md:text-[90px] lg:text-[124px] lg:leading-[0.88] lg:tracking-[0.08em]">
             Who we are
           </span>
         </div>
 
-        <div className="flex flex-col justify-center gap-6">
-          <span className="max-w-[900px] font-serif text-[29px] leading-[1.10] tracking-[-0.01em] sm:text-[38px] md:text-[46px] lg:text-[56px]">
-            A neighbourhood store built around real homes and everyday living.
-          </span>
+        <div className="flex flex-col justify-center">
+          <h2 className="max-w-[950px] font-serif text-[28px] leading-[1.18] tracking-[-0.015em] text-[#26231f] sm:text-[38px] md:text-[46px] lg:text-[54px]">
+            A neighbourhood store built around <span className="italic font-normal text-[#9b0090]">real homes</span>, enduring comfort, and everyday living.
+          </h2>
 
-          <p className="mt-3 max-w-[750px] text-[16px] leading-7 text-[#696157] sm:mt-5 sm:text-[18px] sm:leading-8 md:text-[21px] lg:mt-8 lg:text-[26px] lg:leading-4">
-            We believe choosing something for your home should feel simple.
-            Whether it is a sofa, television, refrigerator or dining table,
-            our goal is to help you find products that fit your space,
-            lifestyle and budget.
+          <p className="mt-5 max-w-[800px] text-[16px] leading-relaxed text-[#696157] sm:mt-7 sm:text-[18px] sm:leading-8 md:text-[20px]">
+            We believe choosing something for your home should feel simple, inspiring, and personal. Whether it is a hand-finished teak sofa, a vibrant 4K television, an energy-smart refrigerator, or a bespoke dining table, our mission is to help you discover products that harmonize with your space, your family’s lifestyle, and your budget.
+          </p>
+
+          {/* Quick Metrics Bar */}
+          <div className="mt-8 grid grid-cols-2 gap-4 border-t border-[#26231f]/10 pt-6 sm:grid-cols-4 sm:gap-6 sm:pt-8">
+            <div>
+              <span className="block font-serif text-[26px] font-medium text-[#26231f] sm:text-[32px]">3</span>
+              <span className="text-[12px] uppercase tracking-wider text-[#696157]">Prime Outlets</span>
+            </div>
+            <div>
+              <span className="block font-serif text-[26px] font-medium text-[#26231f] sm:text-[32px]">10k+</span>
+              <span className="text-[12px] uppercase tracking-wider text-[#696157]">Homes Furnished</span>
+            </div>
+            <div>
+              <span className="block font-serif text-[26px] font-medium text-[#26231f] sm:text-[32px]">500+</span>
+              <span className="text-[12px] uppercase tracking-wider text-[#696157]">Curated Designs</span>
+            </div>
+            <div>
+              <span className="block font-serif text-[26px] font-medium text-[#26231f] sm:text-[32px]">100%</span>
+              <span className="text-[12px] uppercase tracking-wider text-[#696157]">Direct Warranty</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. VISION & MISSION (EDITORIAL ARCHITECTURAL SPLIT) */}
+      <div className="mt-16 border-t border-[#26231f]/15 pt-14 sm:mt-20 sm:pt-16 lg:mt-24">
+        <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#9b0090]">
+              Our Guiding Principles
+            </span>
+            <h3 className="mt-2 font-serif text-[32px] tracking-[-0.025em] text-[#26231f] sm:text-[40px] md:text-[46px]">
+              Vision &amp; Purpose
+            </h3>
+          </div>
+          <p className="max-w-[480px] text-[15px] leading-relaxed text-[#696157]">
+            Driven by craftsmanship, fueled by innovation, and committed to making great home design accessible across regional towns and cities.
           </p>
         </div>
 
+        <div className="grid gap-0 border-y border-[#26231f]/15 md:grid-cols-2">
+          {/* Vision */}
+          <div className="border-b border-[#26231f]/15 py-10 md:border-b-0 md:border-r md:py-12 md:pr-12">
+            <div className="flex items-center justify-between">
+              <span className="text-[46px] font-light leading-none text-[#dda9da]">01</span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#9b0090]/20 bg-[#9b0090]/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#9b0090]">
+                <Compass className="h-3.5 w-3.5" /> Our Vision
+              </span>
+            </div>
+
+            <h4 className="mt-6 font-serif text-[26px] leading-snug text-[#26231f] sm:text-[30px]">
+              To shape inspiring homes through accessible luxury and enduring craft.
+            </h4>
+
+            <p className="mt-4 text-[15px] leading-7 text-[#696157] sm:text-[16px] sm:leading-8">
+              To be the most trusted and cherished home lifestyle retailer across Karnataka and Andhra Pradesh—bridging timeless furniture craftsmanship with modern, intelligent technology, transforming everyday spaces into warm sanctuaries for generations.
+            </p>
+
+            <ul className="mt-6 space-y-2.5 text-[14px] text-[#26231f]">
+              <li className="flex items-center gap-2.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#dda9da]/40 text-[#9b0090]">
+                  <Check className="h-3 w-3 stroke-[3]" />
+                </span>
+                <span>Elevating everyday regional living with world-class standards</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#dda9da]/40 text-[#9b0090]">
+                  <Check className="h-3 w-3 stroke-[3]" />
+                </span>
+                <span>Sustainable materials &amp; handpicked electronics from leading brands</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Mission */}
+          <div className="py-10 md:py-12 md:pl-12">
+            <div className="flex items-center justify-between">
+              <span className="text-[46px] font-light leading-none text-[#dda9da]">02</span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#9b0090]/20 bg-[#9b0090]/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#9b0090]">
+                <Target className="h-3.5 w-3.5" /> Our Mission
+              </span>
+            </div>
+
+            <h4 className="mt-6 font-serif text-[26px] leading-snug text-[#26231f] sm:text-[30px]">
+              Simplifying every home choice with honest value and genuine care.
+            </h4>
+
+            <p className="mt-4 text-[15px] leading-7 text-[#696157] sm:text-[16px] sm:leading-8">
+              To demystify home shopping by uniting premium furniture, state-of-the-art appliances, and personal local assistance under one roof. We commit to upfront, fair pricing, swift safe delivery, and dependable lifetime after-sales support.
+            </p>
+
+            <ul className="mt-6 space-y-2.5 text-[14px] text-[#26231f]">
+              <li className="flex items-center gap-2.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#dda9da]/40 text-[#9b0090]">
+                  <Check className="h-3 w-3 stroke-[3]" />
+                </span>
+                <span>Transparent, no-hidden-cost pricing on all ranges</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#dda9da]/40 text-[#9b0090]">
+                  <Check className="h-3 w-3 stroke-[3]" />
+                </span>
+                <span>Attentive consultation, custom fitting, and safe installation</span>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
+
+      {/* 3. ANIMATED EXPANSION BANNER: WE ARE OPENING IN SEVERAL LOCATIONS */}
+      <div className="mt-14 overflow-hidden rounded-2xl border border-[#26231f]/10 bg-gradient-to-br from-[#faf8f5] via-white to-[#fbf7fb] p-6 shadow-xs sm:mt-16 sm:p-8 md:p-10">
+        {/* Animated Header & Location Badges */}
+        <div className="flex flex-col items-center justify-between gap-6 text-center lg:flex-row lg:text-left">
+          <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
+            <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#9b0090]/10 text-[#9b0090] shadow-xs">
+              <MapPin className="h-7 w-7 animate-bounce" />
+              <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#9b0090] opacity-75" />
+                <span className="relative inline-flex h-3.5 w-3.5 rounded-full bg-[#9b0090]" />
+              </span>
+            </div>
+
+            <div>
+              <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.25em] text-[#9b0090]">
+                <Sparkles className="h-3.5 w-3.5 animate-spin [animation-duration:6s]" />
+                Regional Expansion
+              </div>
+              <h3 className="mt-1 font-serif text-[24px] font-medium tracking-tight text-[#26231f] sm:text-[30px] md:text-[34px]">
+                We are opening in several locations
+              </h3>
+              <p className="mt-1 text-[14px] text-[#696157] sm:text-[15px]">
+                Bringing handcrafted furniture and smart electronics closer to your home.
+              </p>
+            </div>
+          </div>
+
+          {/* Animated Interactive Location Badges */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {/* Location 1: Thirthahalli */}
+            <div className="group relative flex items-center gap-2.5 rounded-full border border-[#9b0090]/25 bg-white px-5 py-2.5 text-[14px] font-medium text-[#26231f] shadow-xs transition-all duration-300 hover:scale-105 hover:border-[#9b0090] hover:shadow-md">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+              </span>
+              <span className="font-semibold text-[#9b0090]">Thirthahalli</span>
+              <span className="text-[12px] text-[#696157]">(Karnataka)</span>
+            </div>
+
+            {/* Location 2: Koppa */}
+            <div className="group relative flex items-center gap-2.5 rounded-full border border-[#9b0090]/25 bg-white px-5 py-2.5 text-[14px] font-medium text-[#26231f] shadow-xs transition-all duration-300 hover:scale-105 hover:border-[#9b0090] hover:shadow-md">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+              </span>
+              <span className="font-semibold text-[#9b0090]">Koppa</span>
+              <span className="text-[12px] text-[#696157]">(Karnataka)</span>
+            </div>
+
+            {/* Location 3: Andhra Pradesh */}
+            <div className="group relative flex items-center gap-2.5 rounded-full border border-[#9b0090]/25 bg-white px-5 py-2.5 text-[14px] font-medium text-[#26231f] shadow-xs transition-all duration-300 hover:scale-105 hover:border-[#9b0090] hover:shadow-md">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+              </span>
+              <span className="font-semibold text-[#9b0090]">Andhra Pradesh</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Continuous Smooth Infinite Marquee Track */}
+        <div className="relative mt-8 overflow-hidden border-t border-[#26231f]/10 pt-5">
+          {/* Subtle gradient fades on edges */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#faf8f5] to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#faf8f5] to-transparent" />
+
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+                @keyframes locationMarquee {
+                  0% { transform: translate3d(0, 0, 0); }
+                  100% { transform: translate3d(-50%, 0, 0); }
+                }
+                .location-marquee-track {
+                  display: flex;
+                  width: max-content;
+                  animation: locationMarquee 26s linear infinite;
+                  will-change: transform;
+                }
+                .location-marquee-track:hover {
+                  animation-play-state: paused;
+                }
+              `,
+            }}
+          />
+
+          <div className="location-marquee-track py-1">
+            {/* Loop Item Set 1 */}
+            <div className="flex items-center gap-8 pr-8 text-[12px] font-medium uppercase tracking-[0.2em] text-[#696157]">
+              <span className="inline-flex items-center gap-2 font-semibold text-[#9b0090]">
+                <Store className="h-3.5 w-3.5" /> Now Opening In Several Locations
+              </span>
+              <span className="text-[#dda9da]">✦</span>
+              <span className="inline-flex items-center gap-1.5 font-medium text-[#26231f]">
+                <MapPin className="h-3.5 w-3.5 text-[#9b0090]" /> Thirthahalli Outlet
+              </span>
+              <span className="text-[#dda9da]">✦</span>
+              <span className="inline-flex items-center gap-1.5 font-medium text-[#26231f]">
+                <MapPin className="h-3.5 w-3.5 text-[#9b0090]" /> Koppa Showroom
+              </span>
+              <span className="text-[#dda9da]">✦</span>
+              <span className="inline-flex items-center gap-1.5 font-medium text-[#26231f]">
+                <MapPin className="h-3.5 w-3.5 text-[#9b0090]" /> Andhra Pradesh Regional Hub
+              </span>
+              <span className="text-[#dda9da]">✦</span>
+              <span className="font-semibold text-[#9b0090]">
+                Experiential Showrooms • Direct Warranty • Doorstep Delivery
+              </span>
+              <span className="text-[#dda9da]">✦</span>
+            </div>
+
+            {/* Loop Item Set 2 (Exact Duplicate for seamless infinite loop) */}
+            <div aria-hidden="true" className="flex items-center gap-8 pr-8 text-[12px] font-medium uppercase tracking-[0.2em] text-[#696157]">
+              <span className="inline-flex items-center gap-2 font-semibold text-[#9b0090]">
+                <Store className="h-3.5 w-3.5" /> Now Opening In Several Locations
+              </span>
+              <span className="text-[#dda9da]">✦</span>
+              <span className="inline-flex items-center gap-1.5 font-medium text-[#26231f]">
+                <MapPin className="h-3.5 w-3.5 text-[#9b0090]" /> Thirthahalli Outlet
+              </span>
+              <span className="text-[#dda9da]">✦</span>
+              <span className="inline-flex items-center gap-1.5 font-medium text-[#26231f]">
+                <MapPin className="h-3.5 w-3.5 text-[#9b0090]" /> Koppa Showroom
+              </span>
+              <span className="text-[#dda9da]">✦</span>
+              <span className="inline-flex items-center gap-1.5 font-medium text-[#26231f]">
+                <MapPin className="h-3.5 w-3.5 text-[#9b0090]" /> Andhra Pradesh Regional Hub
+              </span>
+              <span className="text-[#dda9da]">✦</span>
+              <span className="font-semibold text-[#9b0090]">
+                Experiential Showrooms • Direct Warranty • Doorstep Delivery
+              </span>
+              <span className="text-[#dda9da]">✦</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
